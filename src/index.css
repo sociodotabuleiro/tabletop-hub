@@ -50,6 +50,15 @@
     --glow-green: 150 70% 45%;
     --glass-bg: 220 20% 12%;
     --glass-border: 220 15% 22%;
+    
+    /* CRM-specific tokens */
+    --crm-purple: 265 70% 45%;
+    --crm-purple-foreground: 0 0% 100%;
+    --crm-orange: 25 95% 53%;
+    --crm-green: 150 70% 45%;
+    --crm-yellow: 45 93% 55%;
+    --crm-red: 0 84% 60%;
+    --crm-blue: 210 80% 55%;
   }
 }
 
