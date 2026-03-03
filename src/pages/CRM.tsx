@@ -6,7 +6,7 @@ import { CRMLogin } from "@/components/crm/CRMLogin";
 import { StatsCards } from "@/components/crm/StatsCards";
 import { LeadsTable } from "@/components/crm/LeadsTable";
 import { LeadDetailPanel } from "@/components/crm/LeadDetailPanel";
-import { Lead, mockLeads } from "@/components/crm/types";
+import { Lead } from "@/components/crm/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -23,7 +23,6 @@ const CRM = () => {
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
   const [qualifyingIds, setQualifyingIds] = useState<Set<string>>(new Set());
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [useMock, setUseMock] = useState(false);
   const [activePage, setActivePage] = useState<CRMPage>("leads");
 
   useEffect(() => {
@@ -46,18 +45,8 @@ const CRM = () => {
       .order("created_at", { ascending: false });
     if (error) {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
-      // Fall back to mock data for visualization
-      setLeads(mockLeads);
-      setUseMock(true);
     } else {
-      const dbLeads = (data as any) || [];
-      if (dbLeads.length === 0) {
-        setLeads(mockLeads);
-        setUseMock(true);
-      } else {
-        setLeads(dbLeads);
-        setUseMock(false);
-      }
+      setLeads((data as any) || []);
     }
     setLoading(false);
   }, []);
@@ -85,11 +74,6 @@ const CRM = () => {
   };
 
   const updateStatus = async (id: string, status: string) => {
-    if (useMock) {
-      setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status } : l)));
-      if (selectedLead?.id === id) setSelectedLead((prev) => prev ? { ...prev, status } : null);
-      return;
-    }
     const { error } = await supabase.from("leads" as any).update({ status } as any).eq("id", id);
     if (error) {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
@@ -101,30 +85,6 @@ const CRM = () => {
 
   const qualifyLeads = async (ids: string[]) => {
     setQualifyingIds((prev) => new Set([...prev, ...ids]));
-
-    if (useMock) {
-      // Simulate AI qualification with delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setLeads((prev) =>
-        prev.map((l) => {
-          if (!ids.includes(l.id)) return l;
-          const score = Math.floor(Math.random() * 60) + 30;
-          const qualificacao = score > 70
-            ? "Lead com alto potencial. Volume e dor alinhados ao produto."
-            : score >= 40
-            ? "Lead com potencial moderado. Necessita acompanhamento."
-            : "Lead com baixo fit atual. Baixo volume ou dor não alinhada.";
-          return { ...l, score_ia: score, qualificacao_ia: qualificacao };
-        })
-      );
-      toast({ title: `${ids.length} lead(s) qualificado(s) (mock)!` });
-      setQualifyingIds((prev) => {
-        const next = new Set(prev);
-        ids.forEach((id) => next.delete(id));
-        return next;
-      });
-      return;
-    }
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -222,11 +182,6 @@ const CRM = () => {
               <h1 className="text-sm font-serif font-bold text-foreground hidden sm:block">
                 {activePage === "dashboard" ? "Dashboard" : activePage === "leads" ? "Leads" : activePage === "hosts" ? "Hosts Ativos" : activePage === "lojistas" ? "Lojistas" : "Configurações"}
               </h1>
-              {useMock && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-crm-yellow/20 text-crm-yellow font-semibold">
-                  MOCK DATA
-                </span>
-              )}
             </div>
 
             <div className="flex items-center gap-2">
