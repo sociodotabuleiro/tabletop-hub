@@ -19,6 +19,7 @@ export type Database = {
           cidade: string
           como_organiza: string | null
           created_at: string
+          cupom: string | null
           email: string
           id: string
           instagram: string | null
@@ -41,6 +42,7 @@ export type Database = {
           cidade: string
           como_organiza?: string | null
           created_at?: string
+          cupom?: string | null
           email: string
           id?: string
           instagram?: string | null
@@ -63,6 +65,7 @@ export type Database = {
           cidade?: string
           como_organiza?: string | null
           created_at?: string
+          cupom?: string | null
           email?: string
           id?: string
           instagram?: string | null
