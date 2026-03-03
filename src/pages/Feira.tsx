@@ -10,8 +10,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { CheckCircle, ArrowRight, MessageSquareWarning, MessagesSquare, ShoppingCart, Instagram } from "lucide-react";
+import { CheckCircle, ArrowRight, MessageSquareWarning, MessagesSquare, ShoppingCart, Instagram, Copy, Gift, Sparkles } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { toast as sonnerToast } from "sonner";
 
 const leadSchema = z.object({
   nome: z.string().trim().min(2, "Precisamos do seu nome.").max(100),
@@ -49,7 +50,8 @@ const dorOptions = [
   },
 ];
 
-const AUTO_RETURN_SECONDS = 4;
+const AUTO_RETURN_SECONDS = 15;
+const COUPON_CODE = "ABRIN2026";
 
 const Feira = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -131,28 +133,66 @@ const Feira = () => {
     }
   };
 
-  // ─── SUCCESS SCREEN ─────────────────────────────────
+  const copyCoupon = () => {
+    navigator.clipboard.writeText(COUPON_CODE).then(() => {
+      sonnerToast.success("Cupom copiado!");
+    }).catch(() => {
+      sonnerToast.info(`Seu cupom: ${COUPON_CODE}`);
+    });
+  };
+
+  // ─── THANK YOU + COUPON SCREEN ─────────────────────────
   if (submitted) {
     return (
-      <div className="fixed inset-0 bg-background flex items-center justify-center px-8 z-50">
-        <div className="max-w-lg text-center space-y-8 animate-fade-up">
-          <img src={logo} alt="Logo" className="h-24 mx-auto drop-shadow-lg" />
+      <div className="fixed inset-0 bg-background flex items-center justify-center px-6 z-50 overflow-y-auto">
+        <div className="max-w-lg w-full text-center space-y-8 py-10 animate-fade-up">
+          <img src={logo} alt="Logo" className="h-20 mx-auto drop-shadow-lg" />
 
           <div className="inline-flex items-center justify-center h-24 w-24 rounded-full border-2 border-accent/30 mx-auto">
             <CheckCircle className="h-12 w-12 text-accent" />
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground leading-tight">
+          <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground leading-tight">
             Sua cadeira está{" "}
-            <span className="text-gradient-warm">reservada.</span>
+            <span className="text-gradient-warm">reservada!</span>
           </h1>
 
           <p className="text-lg text-muted-foreground font-sans">
-            Falaremos em breve.
+            Obrigado por se cadastrar. Falaremos em breve com uma proposta exclusiva.
           </p>
 
+          {/* Coupon Card */}
+          <div className="glass rounded-2xl p-6 md:p-8 border border-primary/30 space-y-4 glow-orange">
+            <div className="flex items-center justify-center gap-2 text-primary">
+              <Gift className="h-6 w-6" />
+              <span className="text-sm font-sans font-bold uppercase tracking-wider">
+                Presente exclusivo da feira
+              </span>
+            </div>
+
+            <p className="text-sm text-muted-foreground font-sans">
+              Use o cupom abaixo e ganhe <span className="text-foreground font-bold">20% de desconto</span> nos 3 primeiros meses da plataforma:
+            </p>
+
+            <button
+              onClick={copyCoupon}
+              className="group flex items-center justify-center gap-3 mx-auto px-8 py-4 rounded-xl border-2 border-dashed border-primary/50 bg-primary/5 hover:bg-primary/10 transition-all active:scale-95"
+            >
+              <Sparkles className="h-5 w-5 text-primary" />
+              <span className="text-2xl md:text-3xl font-mono font-bold tracking-[0.2em] text-foreground">
+                {COUPON_CODE}
+              </span>
+              <Copy className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+            </button>
+
+            <p className="text-xs text-muted-foreground font-sans opacity-70">
+              Toque para copiar · Válido até 30/06/2026
+            </p>
+          </div>
+
+          {/* Auto-return */}
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground font-sans">
-            <div className="h-8 w-8 rounded-full border border-border flex items-center justify-center text-foreground font-bold">
+            <div className="h-8 w-8 rounded-full border border-border flex items-center justify-center text-foreground font-bold text-xs">
               {countdown}
             </div>
             <span>Próximo cadastro</span>
@@ -167,7 +207,7 @@ const Feira = () => {
             }}
             className="text-muted-foreground hover:text-foreground"
           >
-            Cadastrar agora →
+            Cadastrar outra pessoa →
           </Button>
         </div>
       </div>
