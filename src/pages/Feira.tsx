@@ -10,13 +10,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { CheckCircle, ArrowRight, MessageSquareWarning, MessagesSquare, ShoppingCart } from "lucide-react";
+import { CheckCircle, ArrowRight, MessageSquareWarning, MessagesSquare, ShoppingCart, Instagram } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const leadSchema = z.object({
   nome: z.string().trim().min(2, "Precisamos do seu nome.").max(100),
   empresa: z.string().trim().min(2, "Nome da loja ou espaço.").max(200),
   whatsapp: z.string().trim().min(10, "WhatsApp com DDD.").max(20),
+  instagram: z.string().trim().max(100).optional().or(z.literal("")),
   mesas_por_mes: z.string({ required_error: "Selecione o volume." }),
   maior_dor: z.string({ required_error: "Selecione seu maior gargalo." }),
 });
@@ -62,6 +63,7 @@ const Feira = () => {
       nome: "",
       empresa: "",
       whatsapp: "",
+      instagram: "",
       mesas_por_mes: "",
       maior_dor: "",
     },
@@ -95,6 +97,7 @@ const Feira = () => {
           nome: data.nome,
           email: `${data.whatsapp.replace(/\D/g, "")}@feira.local`,
           whatsapp: data.whatsapp,
+          instagram: data.instagram || null,
           cidade: data.empresa,
           perfil: "lojista",
           mesas_por_mes: data.mesas_por_mes,
@@ -239,6 +242,30 @@ const Feira = () => {
                           className="h-16 text-lg rounded-xl border-border bg-card/50 placeholder:text-muted-foreground/50"
                           {...field}
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Instagram */}
+                <FormField
+                  control={form.control}
+                  name="instagram"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-sans font-medium text-muted-foreground uppercase tracking-wider">
+                        Instagram (opcional)
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Instagram className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/50" />
+                          <Input
+                            placeholder="@sualojaou perfil"
+                            className="h-16 text-lg rounded-xl border-border bg-card/50 placeholder:text-muted-foreground/50 pl-12"
+                            {...field}
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
