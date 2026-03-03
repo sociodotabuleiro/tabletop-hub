@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { Search, Download, Users, Flame, Snowflake, CheckCircle, RefreshCw, LogIn } from "lucide-react";
+import { Search, Download, RefreshCw, LogIn, ExternalLink, Copy } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 type Lead = {
@@ -27,20 +28,23 @@ type Lead = {
   created_at: string;
 };
 
-const statusColors: Record<string, string> = {
-  novo: "bg-primary/20 text-primary border-primary/30",
-  quente: "bg-red-500/20 text-red-400 border-red-500/30",
-  morno: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-  frio: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  convertido: "bg-accent/20 text-accent border-accent/30",
+const statusOptions = [
+  { value: "novo", label: "Novo", color: "bg-primary/20 text-primary border-primary/30" },
+  { value: "quente", label: "Contatado", color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
+  { value: "convertido", label: "Fechado", color: "bg-accent/20 text-accent border-accent/30" },
+];
+
+const volumeColors: Record<string, string> = {
+  "1-5": "bg-muted text-muted-foreground",
+  "6-15": "bg-primary/15 text-primary",
+  "16-30": "bg-primary/25 text-primary",
+  "30+": "bg-accent/20 text-accent",
 };
 
-const statusIcons: Record<string, any> = {
-  novo: Users,
-  quente: Flame,
-  morno: Flame,
-  frio: Snowflake,
-  convertido: CheckCircle,
+const dorLabels: Record<string, string> = {
+  desistencias: "Desistências",
+  organizacao_caotica: "Organização caótica",
+  dificuldade_vendas: "Vendas de expansões",
 };
 
 const Admin = () => {
@@ -48,7 +52,6 @@ const Admin = () => {
   const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [filterPerfil, setFilterPerfil] = useState("todos");
   const [filterStatus, setFilterStatus] = useState("todos");
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
   const [email, setEmail] = useState("");
@@ -56,29 +59,18 @@ const Admin = () => {
   const [loginLoading, setLoginLoading] = useState(false);
 
   useEffect(() => {
-    checkAuth();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setIsAuth(!!session);
+      if (session) fetchLeads();
+    });
+    supabase.auth.getSession().then(({ data }) => {
+      setIsAuth(!!data.session);
+      if (data.session) fetchLeads();
+    });
+    return () => subscription.unsubscribe();
   }, []);
 
-  const checkAuth = async () => {
-    const { data } = await supabase.auth.getSession();
-    setIsAuth(!!data.session);
-    if (data.session) fetchLeads();
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
-    } else {
-      setIsAuth(true);
-      fetchLeads();
-    }
-    setLoginLoading(false);
-  };
-
-  const fetchLeads = async () => {
+  const fetchLeads = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("leads" as any)
@@ -91,7 +83,7 @@ const Admin = () => {
       setLeads((data as any) || []);
     }
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     let result = leads;
@@ -100,15 +92,23 @@ const Admin = () => {
       result = result.filter(
         (l) =>
           l.nome.toLowerCase().includes(s) ||
-          l.email.toLowerCase().includes(s) ||
           l.cidade.toLowerCase().includes(s) ||
-          (l.jogos_favoritos && l.jogos_favoritos.toLowerCase().includes(s))
+          l.whatsapp.includes(s)
       );
     }
-    if (filterPerfil !== "todos") result = result.filter((l) => l.perfil === filterPerfil);
     if (filterStatus !== "todos") result = result.filter((l) => l.status === filterStatus);
     setFilteredLeads(result);
-  }, [leads, search, filterPerfil, filterStatus]);
+  }, [leads, search, filterStatus]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    }
+    setLoginLoading(false);
+  };
 
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase
@@ -123,33 +123,67 @@ const Admin = () => {
   };
 
   const exportCSV = () => {
-    const headers = ["Nome", "Email", "WhatsApp", "Cidade", "Perfil", "Jogos", "Mesas/Mês", "Cobra?", "Organiza", "Maior Dor", "Beta?", "Status", "Data"];
+    const headers = ["Nome", "Empresa", "WhatsApp", "Volume", "Dor Principal", "Status", "Data"];
     const rows = filteredLeads.map((l) => [
-      l.nome, l.email, l.whatsapp, l.cidade, l.perfil,
-      l.jogos_favoritos || "", l.mesas_por_mes || "", l.ja_cobra_por_mesa ? "Sim" : "Não",
-      l.como_organiza || "", l.maior_dor || "", l.interesse_beta ? "Sim" : "Não",
-      l.status, new Date(l.created_at).toLocaleString("pt-BR"),
+      l.nome,
+      l.cidade,
+      l.whatsapp,
+      l.mesas_por_mes || "",
+      dorLabels[l.maior_dor || ""] || l.maior_dor || "",
+      l.status,
+      new Date(l.created_at).toLocaleString("pt-BR"),
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.map((c) => `"${c}"`).join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `leads_abrinc_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `leads_abrin_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "CSV exportado!", description: `${filteredLeads.length} leads.` });
   };
 
-  // Login screen
+  const copyAllData = () => {
+    const text = filteredLeads
+      .map((l) => `${l.nome} | ${l.cidade} | ${l.whatsapp} | ${l.mesas_por_mes || "-"} | ${dorLabels[l.maior_dor || ""] || "-"} | ${l.status}`)
+      .join("\n");
+    navigator.clipboard.writeText(text);
+    toast({ title: "Copiado!", description: "Dados copiados para a área de transferência." });
+  };
+
+  // ─── LOGIN ────────────────────────────────────────
   if (isAuth === false) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
-        <div className="glass rounded-2xl p-8 max-w-sm w-full space-y-6">
+      <div className="min-h-screen bg-background flex items-center justify-center px-6">
+        <div className="glass rounded-2xl p-8 md:p-10 max-w-sm w-full space-y-6 border border-border">
           <img src={logo} alt="Logo" className="h-16 mx-auto" />
-          <h1 className="text-xl font-serif font-bold text-foreground text-center">CRM — Acesso Restrito</h1>
+          <div className="text-center">
+            <h1 className="text-xl font-serif font-bold text-foreground">Painel Interno</h1>
+            <p className="text-sm text-muted-foreground font-sans mt-1">Acesso restrito à equipe</p>
+          </div>
           <form onSubmit={handleLogin} className="space-y-4">
-            <Input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            <Input type="password" placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} required />
-            <Button type="submit" disabled={loginLoading} className="w-full bg-primary text-primary-foreground">
+            <Input
+              type="email"
+              placeholder="E-mail"
+              className="h-12 rounded-xl"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder="Senha"
+              className="h-12 rounded-xl"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <Button
+              type="submit"
+              disabled={loginLoading}
+              className="w-full h-12 bg-primary text-primary-foreground rounded-xl font-semibold"
+            >
               <LogIn className="h-4 w-4 mr-2" />
               {loginLoading ? "Entrando..." : "Entrar"}
             </Button>
@@ -160,31 +194,46 @@ const Admin = () => {
   }
 
   if (isAuth === null) {
-    return <div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Carregando...</div>;
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground font-sans animate-pulse">Carregando...</p>
+      </div>
+    );
   }
 
+  // ─── STATS ────────────────────────────────────────
   const stats = {
     total: leads.length,
     novos: leads.filter((l) => l.status === "novo").length,
-    hosts: leads.filter((l) => l.perfil === "host_mestre").length,
-    lojistas: leads.filter((l) => l.perfil === "lojista").length,
-    beta: leads.filter((l) => l.interesse_beta).length,
+    contatados: leads.filter((l) => l.status === "quente").length,
+    fechados: leads.filter((l) => l.status === "convertido").length,
+    volume30: leads.filter((l) => l.mesas_por_mes === "30+" || l.mesas_por_mes === "16-30").length,
   };
 
+  // ─── DASHBOARD ────────────────────────────────────
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="glass border-b border-border px-4 py-4 md:px-8">
+      {/* Top Bar */}
+      <div className="glass border-b border-border px-4 py-3 md:px-8 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="Logo" className="h-10" />
-            <h1 className="text-lg font-serif font-bold text-foreground">CRM — ABRINC 2026</h1>
+            <img src={logo} alt="Logo" className="h-8" />
+            <h1 className="text-base font-serif font-bold text-foreground hidden sm:block">
+              CRM — ABRIN 2026
+            </h1>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={fetchLeads} className="border-border">
+            <Button variant="ghost" size="sm" onClick={fetchLeads}>
               <RefreshCw className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm" onClick={exportCSV} className="border-accent text-accent">
+            <Button variant="ghost" size="sm" onClick={copyAllData}>
+              <Copy className="h-4 w-4" />
+            </Button>
+            <Button
+              size="sm"
+              onClick={exportCSV}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
               <Download className="h-4 w-4 mr-1" /> CSV
             </Button>
           </div>
@@ -192,133 +241,139 @@ const Admin = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6 md:px-8 space-y-6">
-        {/* Stats */}
+        {/* Stat Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {[
-            { label: "Total", value: stats.total, color: "text-foreground" },
-            { label: "Novos", value: stats.novos, color: "text-primary" },
-            { label: "Hosts/Mestres", value: stats.hosts, color: "text-accent" },
-            { label: "Lojistas", value: stats.lojistas, color: "text-primary" },
-            { label: "Querem Beta", value: stats.beta, color: "text-accent" },
+            { label: "Total", value: stats.total, accent: false },
+            { label: "Novos", value: stats.novos, accent: false },
+            { label: "Contatados", value: stats.contatados, accent: false },
+            { label: "Fechados", value: stats.fechados, accent: true },
+            { label: "Alto Volume", value: stats.volume30, accent: true },
           ].map((s) => (
-            <div key={s.label} className="glass rounded-xl p-4 text-center">
-              <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-              <p className="text-xs text-muted-foreground">{s.label}</p>
+            <div key={s.label} className="glass rounded-xl p-4 text-center border border-border">
+              <p className={`text-2xl font-bold font-sans ${s.accent ? "text-accent" : "text-foreground"}`}>
+                {s.value}
+              </p>
+              <p className="text-xs text-muted-foreground font-sans">{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar por nome, e-mail, cidade ou jogo..."
-              className="pl-10"
+              placeholder="Buscar nome, empresa ou WhatsApp..."
+              className="pl-10 h-11 rounded-xl"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <Select value={filterPerfil} onValueChange={setFilterPerfil}>
-            <SelectTrigger className="w-full md:w-44">
-              <SelectValue placeholder="Perfil" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todos">Todos os perfis</SelectItem>
-              <SelectItem value="jogador">Jogador</SelectItem>
-              <SelectItem value="host_mestre">Host/Mestre</SelectItem>
-              <SelectItem value="lojista">Lojista</SelectItem>
-              <SelectItem value="editora">Editora</SelectItem>
-              <SelectItem value="outro">Outro</SelectItem>
-            </SelectContent>
-          </Select>
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-full md:w-44">
+            <SelectTrigger className="w-full sm:w-40 h-11 rounded-xl">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="todos">Todos os status</SelectItem>
+              <SelectItem value="todos">Todos</SelectItem>
               <SelectItem value="novo">Novo</SelectItem>
-              <SelectItem value="quente">Quente</SelectItem>
-              <SelectItem value="morno">Morno</SelectItem>
-              <SelectItem value="frio">Frio</SelectItem>
-              <SelectItem value="convertido">Convertido</SelectItem>
+              <SelectItem value="quente">Contatado</SelectItem>
+              <SelectItem value="convertido">Fechado</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Results count */}
-        <p className="text-sm text-muted-foreground">
-          {filteredLeads.length} lead{filteredLeads.length !== 1 ? "s" : ""} encontrado{filteredLeads.length !== 1 ? "s" : ""}
+        {/* Count */}
+        <p className="text-sm text-muted-foreground font-sans">
+          {filteredLeads.length} lead{filteredLeads.length !== 1 ? "s" : ""}
         </p>
 
-        {/* Lead cards */}
+        {/* Table */}
         {loading ? (
-          <p className="text-center text-muted-foreground py-10">Carregando leads...</p>
+          <p className="text-center text-muted-foreground py-16 animate-pulse">Carregando leads...</p>
         ) : filteredLeads.length === 0 ? (
-          <p className="text-center text-muted-foreground py-10">Nenhum lead encontrado.</p>
+          <div className="text-center py-16 space-y-2">
+            <p className="text-muted-foreground">Nenhum lead encontrado.</p>
+            <p className="text-xs text-muted-foreground">Cadastre parceiros em <span className="text-primary">/feira</span></p>
+          </div>
         ) : (
-          <div className="space-y-3">
-            {filteredLeads.map((lead) => {
-              const StatusIcon = statusIcons[lead.status] || Users;
-              return (
-                <div key={lead.id} className="glass rounded-xl p-4 md:p-6 space-y-3">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                    <div>
-                      <h3 className="font-semibold text-foreground text-lg">{lead.nome}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {lead.email} · {lead.whatsapp} · {lead.cidade}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="capitalize">{lead.perfil.replace("_", "/")}</Badge>
-                      <Badge className={`${statusColors[lead.status]} border capitalize`}>
-                        <StatusIcon className="h-3 w-3 mr-1" />
-                        {lead.status}
-                      </Badge>
-                      {lead.interesse_beta && <Badge className="bg-accent/20 text-accent border border-accent/30">Beta</Badge>}
-                      {lead.ja_cobra_por_mesa && <Badge className="bg-primary/20 text-primary border border-primary/30">Cobra $</Badge>}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
-                    {lead.jogos_favoritos && (
-                      <p><span className="text-muted-foreground">Jogos:</span> {lead.jogos_favoritos}</p>
-                    )}
-                    {lead.mesas_por_mes && (
-                      <p><span className="text-muted-foreground">Mesas/mês:</span> {lead.mesas_por_mes}</p>
-                    )}
-                    {lead.como_organiza && (
-                      <p><span className="text-muted-foreground">Organiza via:</span> {lead.como_organiza}</p>
-                    )}
-                  </div>
-
-                  {lead.maior_dor && (
-                    <p className="text-sm italic text-muted-foreground">"{lead.maior_dor}"</p>
-                  )}
-
-                  <div className="flex gap-2 pt-1">
-                    {["novo", "quente", "morno", "frio", "convertido"].map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => updateStatus(lead.id, s)}
-                        className={`text-xs px-3 py-1 rounded-full border transition-all capitalize ${
-                          lead.status === s
-                            ? statusColors[s]
-                            : "border-border text-muted-foreground hover:border-primary/40"
-                        }`}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(lead.created_at).toLocaleString("pt-BR")}
-                  </p>
-                </div>
-              );
-            })}
+          <div className="glass rounded-xl border border-border overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border hover:bg-transparent">
+                    <TableHead className="font-sans text-xs text-muted-foreground uppercase tracking-wider">Nome</TableHead>
+                    <TableHead className="font-sans text-xs text-muted-foreground uppercase tracking-wider">Empresa</TableHead>
+                    <TableHead className="font-sans text-xs text-muted-foreground uppercase tracking-wider">WhatsApp</TableHead>
+                    <TableHead className="font-sans text-xs text-muted-foreground uppercase tracking-wider">Volume</TableHead>
+                    <TableHead className="font-sans text-xs text-muted-foreground uppercase tracking-wider">Dor Principal</TableHead>
+                    <TableHead className="font-sans text-xs text-muted-foreground uppercase tracking-wider">Status</TableHead>
+                    <TableHead className="font-sans text-xs text-muted-foreground uppercase tracking-wider">Data</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredLeads.map((lead) => (
+                    <TableRow key={lead.id} className="border-border hover:bg-card/50">
+                      <TableCell className="font-semibold text-foreground">{lead.nome}</TableCell>
+                      <TableCell className="text-muted-foreground">{lead.cidade}</TableCell>
+                      <TableCell>
+                        <a
+                          href={`https://wa.me/55${lead.whatsapp.replace(/\D/g, "")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-accent hover:underline inline-flex items-center gap-1"
+                        >
+                          {lead.whatsapp}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </TableCell>
+                      <TableCell>
+                        {lead.mesas_por_mes && (
+                          <Badge
+                            variant="outline"
+                            className={`${volumeColors[lead.mesas_por_mes] || ""} border-0 font-mono text-xs`}
+                          >
+                            {lead.mesas_por_mes}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {dorLabels[lead.maior_dor || ""] || lead.maior_dor || "—"}
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={lead.status}
+                          onValueChange={(val) => updateStatus(lead.id, val)}
+                        >
+                          <SelectTrigger className="h-8 w-32 text-xs rounded-lg border-0 bg-transparent p-0">
+                            <Badge
+                              className={`${statusOptions.find((s) => s.value === lead.status)?.color || ""} border text-xs cursor-pointer`}
+                            >
+                              {statusOptions.find((s) => s.value === lead.status)?.label || lead.status}
+                            </Badge>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {statusOptions.map((s) => (
+                              <SelectItem key={s.value} value={s.value}>
+                                {s.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                        {new Date(lead.created_at).toLocaleDateString("pt-BR", {
+                          day: "2-digit",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         )}
       </div>
