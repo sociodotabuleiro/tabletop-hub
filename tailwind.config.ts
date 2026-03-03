@@ -61,6 +61,15 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        crm: {
+          purple: "hsl(var(--crm-purple))",
+          "purple-foreground": "hsl(var(--crm-purple-foreground))",
+          orange: "hsl(var(--crm-orange))",
+          green: "hsl(var(--crm-green))",
+          yellow: "hsl(var(--crm-yellow))",
+          red: "hsl(var(--crm-red))",
+          blue: "hsl(var(--crm-blue))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
