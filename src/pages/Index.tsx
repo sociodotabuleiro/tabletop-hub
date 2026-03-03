@@ -4,6 +4,7 @@ import PainSection from "@/components/PainSection";
 import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
 import QRCodeSection from "@/components/QRCodeSection";
+import LeadCaptureForm from "@/components/LeadCaptureForm";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 
@@ -15,6 +16,7 @@ const Index = () => (
     <HowItWorks />
     <Testimonials />
     <QRCodeSection />
+    <LeadCaptureForm />
     <FinalCTA />
     <Footer />
   </div>
