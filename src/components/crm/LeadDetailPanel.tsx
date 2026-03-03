@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Lead, statusConfig, volumeConfig, dorLabels, getScoreColor, getLeadClassification } from "./types";
 import { LeadScoreBadge } from "./LeadScoreBadge";
 import { Sparkles, CheckCircle, Archive, ExternalLink, Instagram, Loader2 } from "lucide-react";
+import { LeadInteractions } from "./LeadInteractions";
 
 interface LeadDetailPanelProps {
   lead: Lead | null;
@@ -99,6 +100,9 @@ export function LeadDetailPanel({ lead, open, onClose, onQualify, onUpdateStatus
                 <p className="text-sm text-foreground">{lead.notas_internas}</p>
               </div>
             )}
+
+            {/* Histórico de Interações */}
+            <LeadInteractions leadId={lead.id} />
           </TabsContent>
 
           {/* ─── ANÁLISE IA ─── */}
