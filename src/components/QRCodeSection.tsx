@@ -1,10 +1,12 @@
-import { QRCodeSVG } from "qrcode.react";
 import AnimatedSection from "./AnimatedSection";
 
 const QRCodeSection = () => {
   const feiraUrl = typeof window !== "undefined"
     ? `${window.location.origin}/feira`
     : "https://rpg-sync-point.lovable.app/feira";
+
+  // Use a QR code API to generate the image
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(feiraUrl)}&bgcolor=E8DFD0&color=121212&margin=8`;
 
   return (
     <section className="section-padding">
@@ -14,13 +16,12 @@ const QRCodeSection = () => {
             {/* QR Code */}
             <div className="flex-shrink-0">
               <div className="bg-foreground rounded-2xl p-4">
-                <QRCodeSVG
-                  value={feiraUrl}
-                  size={180}
-                  bgColor="hsl(35, 20%, 90%)"
-                  fgColor="hsl(220, 25%, 6%)"
-                  level="H"
-                  includeMargin={false}
+                <img
+                  src={qrSrc}
+                  alt="QR Code para cadastro"
+                  width={180}
+                  height={180}
+                  className="rounded-lg"
                 />
               </div>
             </div>
