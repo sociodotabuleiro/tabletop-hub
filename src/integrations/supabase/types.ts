@@ -14,7 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leads: {
+        Row: {
+          cidade: string
+          como_organiza: string | null
+          created_at: string
+          email: string
+          id: string
+          interesse_beta: boolean | null
+          ja_cobra_por_mesa: boolean | null
+          jogos_favoritos: string | null
+          maior_dor: string | null
+          mesas_por_mes: string | null
+          nome: string
+          notas_internas: string | null
+          origem: string | null
+          perfil: Database["public"]["Enums"]["lead_profile"]
+          status: Database["public"]["Enums"]["lead_status"]
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          cidade: string
+          como_organiza?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          interesse_beta?: boolean | null
+          ja_cobra_por_mesa?: boolean | null
+          jogos_favoritos?: string | null
+          maior_dor?: string | null
+          mesas_por_mes?: string | null
+          nome: string
+          notas_internas?: string | null
+          origem?: string | null
+          perfil: Database["public"]["Enums"]["lead_profile"]
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+          whatsapp: string
+        }
+        Update: {
+          cidade?: string
+          como_organiza?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          interesse_beta?: boolean | null
+          ja_cobra_por_mesa?: boolean | null
+          jogos_favoritos?: string | null
+          maior_dor?: string | null
+          mesas_por_mes?: string | null
+          nome?: string
+          notas_internas?: string | null
+          origem?: string | null
+          perfil?: Database["public"]["Enums"]["lead_profile"]
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +82,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      lead_profile: "jogador" | "host_mestre" | "lojista" | "editora" | "outro"
+      lead_status: "novo" | "quente" | "morno" | "frio" | "convertido"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +210,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      lead_profile: ["jogador", "host_mestre", "lojista", "editora", "outro"],
+      lead_status: ["novo", "quente", "morno", "frio", "convertido"],
+    },
   },
 } as const
