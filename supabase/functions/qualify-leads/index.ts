@@ -76,8 +76,10 @@ serve(async (req) => {
     const results = [];
 
     for (const lead of leads) {
+      const instagramInfo = lead.instagram ? `Instagram: @${lead.instagram.replace(/^@/, "")}` : "Instagram: não informado";
       const prompt = `Analise este lead capturado em uma feira de jogos de tabuleiro (ABRIN 2026). 
 A empresa é "${lead.cidade}" (nome da loja/espaço), contato "${lead.nome}".
+${instagramInfo}.
 Volume de mesas/eventos por mês: ${lead.mesas_por_mes || "não informado"}.
 Maior dor/gargalo: ${dorLabels[lead.maior_dor] || lead.maior_dor || "não informado"}.
 Perfil: ${lead.perfil}.

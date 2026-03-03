@@ -21,6 +21,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          instagram: string | null
           interesse_beta: boolean | null
           ja_cobra_por_mesa: boolean | null
           jogos_favoritos: string | null
@@ -42,6 +43,7 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          instagram?: string | null
           interesse_beta?: boolean | null
           ja_cobra_por_mesa?: boolean | null
           jogos_favoritos?: string | null
@@ -63,6 +65,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          instagram?: string | null
           interesse_beta?: boolean | null
           ja_cobra_por_mesa?: boolean | null
           jogos_favoritos?: string | null
