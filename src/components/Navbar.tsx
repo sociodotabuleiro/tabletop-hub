@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -16,9 +17,11 @@ const Navbar = () => {
           <a href="#dor" className="text-sm text-muted-foreground hover:text-foreground transition-colors">A Dor</a>
           <a href="#como-funciona" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Como Funciona</a>
           <a href="#comunidade" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Comunidade</a>
-          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-orange">
-            Testar Grátis
-          </Button>
+          <Link to="/feira">
+            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-orange">
+              Testar Grátis
+            </Button>
+          </Link>
         </div>
 
         <button onClick={() => setOpen(!open)} className="md:hidden text-foreground">
@@ -31,7 +34,9 @@ const Navbar = () => {
           <a href="#dor" onClick={() => setOpen(false)} className="text-sm text-muted-foreground">A Dor</a>
           <a href="#como-funciona" onClick={() => setOpen(false)} className="text-sm text-muted-foreground">Como Funciona</a>
           <a href="#comunidade" onClick={() => setOpen(false)} className="text-sm text-muted-foreground">Comunidade</a>
-          <Button size="sm" className="bg-primary text-primary-foreground w-full">Testar Grátis</Button>
+          <Link to="/feira" onClick={() => setOpen(false)}>
+            <Button size="sm" className="bg-primary text-primary-foreground w-full">Testar Grátis</Button>
+          </Link>
         </div>
       )}
     </nav>

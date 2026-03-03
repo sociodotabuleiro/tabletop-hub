@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Search, PlusCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import AnimatedSection from "./AnimatedSection";
 
 const FinalCTA = () => (
@@ -16,14 +17,18 @@ const FinalCTA = () => (
           Junte-se à maior comunidade presencial de Board Games e RPG do Brasil.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-orange rounded-full px-8 py-6 text-base font-sans font-semibold gap-2">
-            <Search size={20} />
-            Sou Jogador — Buscar Mesas
-          </Button>
-          <Button size="lg" variant="outline" className="border-accent text-accent hover:bg-accent/10 glow-green rounded-full px-8 py-6 text-base font-sans font-semibold gap-2">
-            <PlusCircle size={20} />
-            Sou Host — Criar Minha Mesa
-          </Button>
+          <Link to="/feira">
+            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-orange rounded-full px-8 py-6 text-base font-sans font-semibold gap-2 w-full">
+              <Search size={20} />
+              Sou Jogador — Buscar Mesas
+            </Button>
+          </Link>
+          <Link to="/feira">
+            <Button size="lg" variant="outline" className="border-accent text-accent hover:bg-accent/10 glow-green rounded-full px-8 py-6 text-base font-sans font-semibold gap-2 w-full">
+              <PlusCircle size={20} />
+              Sou Host — Criar Minha Mesa
+            </Button>
+          </Link>
         </div>
       </AnimatedSection>
     </div>

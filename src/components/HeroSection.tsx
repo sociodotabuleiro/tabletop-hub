@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Dices } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => (
@@ -47,10 +48,12 @@ const HeroSection = () => (
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.8 }}
       >
-        <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-orange text-base px-8 py-6 rounded-full font-sans font-semibold gap-2">
-          <Dices size={20} />
-          Reúna sua Party (Testar Grátis)
-        </Button>
+        <Link to="/feira">
+          <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-orange text-base px-8 py-6 rounded-full font-sans font-semibold gap-2">
+            <Dices size={20} />
+            Reúna sua Party (Testar Grátis)
+          </Button>
+        </Link>
       </motion.div>
     </div>
 
