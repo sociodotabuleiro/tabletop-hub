@@ -1,11 +1,8 @@
 import AnimatedSection from "./AnimatedSection";
 
 const QRCodeSection = () => {
-  const feiraUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/feira`
-    : "https://rpg-sync-point.lovable.app/feira";
+  const feiraUrl = "https://crm.sociodotabuleiro.app.br/feira";
 
-  // Use a QR code API to generate the image
   const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(feiraUrl)}&bgcolor=E8DFD0&color=121212&margin=8`;
 
   return (
