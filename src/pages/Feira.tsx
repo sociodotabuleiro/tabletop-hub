@@ -50,12 +50,12 @@ const dorOptions = [
   },
 ];
 
-const AUTO_RETURN_SECONDS = 15;
-const COUPON_CODE = "ABRIN2026";
+const AUTO_RETURN_SECONDS = 20;
 
 const Feira = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
   const [countdown, setCountdown] = useState(AUTO_RETURN_SECONDS);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -104,15 +104,18 @@ const Feira = () => {
         origem: "abrin_2026",
       };
 
-      const { error } = await supabase.from("leads" as any).insert([
+      const { data: inserted, error } = await supabase.from("leads" as any).insert([
         {
           ...leadPayload,
           email: `${data.whatsapp.replace(/\D/g, "")}@feira.local`,
           cidade: data.empresa,
           perfil: "lojista",
         },
-      ]);
+      ]).select("cupom").single();
       if (error) throw error;
+
+      // Guardar cupom gerado pelo banco
+      setCouponCode((inserted as any)?.cupom || "SDT-ERRO");
 
       // Enviar para Make.com webhook (fire-and-forget)
       fetch("https://hook.us2.make.com/p7nbf1ceeuf4pdraaltzrncdsr1ujgb1", {
@@ -134,10 +137,10 @@ const Feira = () => {
   };
 
   const copyCoupon = () => {
-    navigator.clipboard.writeText(COUPON_CODE).then(() => {
+    navigator.clipboard.writeText(couponCode).then(() => {
       sonnerToast.success("Cupom copiado!");
     }).catch(() => {
-      sonnerToast.info(`Seu cupom: ${COUPON_CODE}`);
+      sonnerToast.info(`Seu cupom: ${couponCode}`);
     });
   };
 
@@ -171,7 +174,8 @@ const Feira = () => {
             </div>
 
             <p className="text-sm text-muted-foreground font-sans">
-              Use o cupom abaixo e ganhe <span className="text-foreground font-bold">20% de desconto</span> nos 3 primeiros meses da plataforma:
+              Apresente este cupom ao formalizar seu cadastro na plataforma e ganhe{" "}
+              <span className="text-foreground font-bold">5% de cashback</span> por cada usuário que você indicar e converter:
             </p>
 
             <button
@@ -180,7 +184,7 @@ const Feira = () => {
             >
               <Sparkles className="h-5 w-5 text-primary" />
               <span className="text-2xl md:text-3xl font-mono font-bold tracking-[0.2em] text-foreground">
-                {COUPON_CODE}
+                {couponCode}
               </span>
               <Copy className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
             </button>
