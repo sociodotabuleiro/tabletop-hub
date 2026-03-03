@@ -123,11 +123,25 @@ const Feira = () => {
       setCouponCode((inserted as any)?.cupom || "SDT-ERRO");
 
       // Enviar para Make.com webhook (fire-and-forget)
+      const webhookPayload = {
+        nome: data.nome,
+        empresa: data.empresa,
+        whatsapp: data.whatsapp,
+        instagram: data.instagram || "",
+        mesas_por_mes: data.mesas_por_mes,
+        maior_dor: data.maior_dor,
+        origem: "abrin_2026",
+        cupom: (inserted as any)?.cupom || "",
+      };
+      console.log("Payload enviado ao Make:", webhookPayload);
       fetch("https://hook.us2.make.com/p7nbf1ceeuf4pdraaltzrncdsr1ujgb1", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(leadPayload),
-      }).catch(() => {}); // não bloqueia o fluxo se falhar
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify(webhookPayload),
+      }).catch((e) => console.error("Erro webhook Make:", e));
 
       setSubmitted(true);
     } catch (err: any) {
