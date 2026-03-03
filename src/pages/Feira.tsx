@@ -106,12 +106,17 @@ const Feira = () => {
 
       const { data: inserted, error } = await supabase.from("leads" as any).insert([
         {
-          ...leadPayload,
+          nome: data.nome,
           email: `${data.whatsapp.replace(/\D/g, "")}@feira.local`,
+          whatsapp: data.whatsapp,
+          instagram: data.instagram || null,
           cidade: data.empresa,
           perfil: "lojista",
+          mesas_por_mes: data.mesas_por_mes,
+          maior_dor: data.maior_dor,
+          origem: "abrin_2026",
         },
-      ]).select("cupom").single();
+      ]).select("cupom").maybeSingle();
       if (error) throw error;
 
       // Guardar cupom gerado pelo banco
