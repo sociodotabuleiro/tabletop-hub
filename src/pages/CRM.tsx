@@ -3,15 +3,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { CRMSidebar, CRMPage } from "@/components/crm/CRMSidebar";
 import { CRMLogin } from "@/components/crm/CRMLogin";
-import { StatsCards } from "@/components/crm/StatsCards";
+import { DashboardPage } from "@/components/crm/DashboardPage";
 import { LeadsTable } from "@/components/crm/LeadsTable";
 import { LeadDetailPanel } from "@/components/crm/LeadDetailPanel";
+import { HostsPage } from "@/components/crm/HostsPage";
+import { LojistasPage } from "@/components/crm/LojistasPage";
+import { SettingsPage } from "@/components/crm/SettingsPage";
+import { StatsCards } from "@/components/crm/StatsCards";
 import { Lead } from "@/components/crm/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Search, Download, RefreshCw, Sparkles, Loader2, Copy } from "lucide-react";
+import { Search, Download, RefreshCw, Sparkles, Loader2 } from "lucide-react";
 import { statusConfig, dorLabels } from "@/components/crm/types";
 
 const CRM = () => {
@@ -85,7 +89,6 @@ const CRM = () => {
 
   const qualifyLeads = async (ids: string[]) => {
     setQualifyingIds((prev) => new Set([...prev, ...ids]));
-
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -158,7 +161,6 @@ const CRM = () => {
     toast({ title: `${filtered.length} leads exportados!` });
   };
 
-  // ─── AUTH GATES ─────────────────────────
   if (isAuth === false) return <CRMLogin />;
   if (isAuth === null) {
     return (
@@ -168,47 +170,29 @@ const CRM = () => {
     );
   }
 
-  // ─── MAIN CRM LAYOUT ────────────────────
-  return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <CRMSidebar onLogout={handleLogout} activePage={activePage} onNavigate={setActivePage} />
+  const pageTitle: Record<CRMPage, string> = {
+    dashboard: "Dashboard",
+    leads: "Leads",
+    hosts: "Hosts Ativos",
+    lojistas: "Lojistas",
+    settings: "Configurações",
+  };
 
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Top Bar */}
-          <header className="h-14 flex items-center justify-between border-b border-border px-4 bg-background/80 backdrop-blur-sm sticky top-0 z-20">
-            <div className="flex items-center gap-3">
-              <SidebarTrigger className="text-muted-foreground" />
-              <h1 className="text-sm font-serif font-bold text-foreground hidden sm:block">
-                {activePage === "dashboard" ? "Dashboard" : activePage === "leads" ? "Leads" : activePage === "hosts" ? "Hosts Ativos" : activePage === "lojistas" ? "Lojistas" : "Configurações"}
-              </h1>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={qualifyAll}
-                disabled={qualifyingIds.size > 0}
-                className="gap-2 text-crm-purple hover:text-crm-purple hover:bg-crm-purple/10"
-              >
-                {qualifyingIds.size > 0 ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                <span className="hidden sm:inline">Qualificar IA</span>
-              </Button>
-              <Button variant="ghost" size="icon" onClick={fetchLeads} title="Atualizar">
-                <RefreshCw className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={exportCSV} title="Exportar CSV">
-                <Download className="h-4 w-4" />
-              </Button>
-            </div>
-          </header>
-
-          {/* Content */}
-          <main className="flex-1 p-4 md:p-6 space-y-6 overflow-auto">
+  const renderPageContent = () => {
+    switch (activePage) {
+      case "dashboard":
+        return <DashboardPage leads={leads} />;
+      case "hosts":
+        return <HostsPage leads={leads} onSelectLead={setSelectedLead} />;
+      case "lojistas":
+        return <LojistasPage leads={leads} onSelectLead={setSelectedLead} />;
+      case "settings":
+        return <SettingsPage />;
+      case "leads":
+      default:
+        return (
+          <>
             <StatsCards leads={leads} />
-
-            {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -231,11 +215,9 @@ const CRM = () => {
                 </SelectContent>
               </Select>
             </div>
-
             <p className="text-sm text-muted-foreground">
               {filtered.length} lead{filtered.length !== 1 ? "s" : ""}
             </p>
-
             {loading ? (
               <div className="flex items-center justify-center py-20">
                 <Loader2 className="h-8 w-8 animate-spin text-crm-purple" />
@@ -249,10 +231,54 @@ const CRM = () => {
                 onSelectLead={(lead) => setSelectedLead(lead)}
               />
             )}
+          </>
+        );
+    }
+  };
+
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <CRMSidebar onLogout={handleLogout} activePage={activePage} onNavigate={setActivePage} />
+
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="h-14 flex items-center justify-between border-b border-border px-4 bg-background/80 backdrop-blur-sm sticky top-0 z-20">
+            <div className="flex items-center gap-3">
+              <SidebarTrigger className="text-muted-foreground" />
+              <h1 className="text-sm font-serif font-bold text-foreground hidden sm:block">
+                {pageTitle[activePage]}
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {(activePage === "leads" || activePage === "dashboard") && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={qualifyAll}
+                  disabled={qualifyingIds.size > 0}
+                  className="gap-2 text-crm-purple hover:text-crm-purple hover:bg-crm-purple/10"
+                >
+                  {qualifyingIds.size > 0 ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                  <span className="hidden sm:inline">Qualificar IA</span>
+                </Button>
+              )}
+              <Button variant="ghost" size="icon" onClick={fetchLeads} title="Atualizar">
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              {activePage === "leads" && (
+                <Button variant="ghost" size="icon" onClick={exportCSV} title="Exportar CSV">
+                  <Download className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </header>
+
+          <main className="flex-1 p-4 md:p-6 space-y-6 overflow-auto">
+            {renderPageContent()}
           </main>
         </div>
 
-        {/* Lead Detail Slide-over */}
         <LeadDetailPanel
           lead={selectedLead}
           open={!!selectedLead}
