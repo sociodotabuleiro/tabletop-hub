@@ -1,8 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { CRMSidebar } from "@/components/crm/CRMSidebar";
+import { CRMSidebar, CRMPage } from "@/components/crm/CRMSidebar";
 import { CRMLogin } from "@/components/crm/CRMLogin";
 import { StatsCards } from "@/components/crm/StatsCards";
 import { LeadsTable } from "@/components/crm/LeadsTable";
@@ -25,6 +24,7 @@ const CRM = () => {
   const [qualifyingIds, setQualifyingIds] = useState<Set<string>>(new Set());
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [useMock, setUseMock] = useState(false);
+  const [activePage, setActivePage] = useState<CRMPage>("leads");
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
@@ -212,14 +212,16 @@ const CRM = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
-        <CRMSidebar onLogout={handleLogout} />
+        <CRMSidebar onLogout={handleLogout} activePage={activePage} onNavigate={setActivePage} />
 
         <div className="flex-1 flex flex-col min-w-0">
           {/* Top Bar */}
           <header className="h-14 flex items-center justify-between border-b border-border px-4 bg-background/80 backdrop-blur-sm sticky top-0 z-20">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-muted-foreground" />
-              <h1 className="text-sm font-serif font-bold text-foreground hidden sm:block">Leads</h1>
+              <h1 className="text-sm font-serif font-bold text-foreground hidden sm:block">
+                {activePage === "dashboard" ? "Dashboard" : activePage === "leads" ? "Leads" : activePage === "hosts" ? "Hosts Ativos" : activePage === "lojistas" ? "Lojistas" : "Configurações"}
+              </h1>
               {useMock && (
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-crm-yellow/20 text-crm-yellow font-semibold">
                   MOCK DATA

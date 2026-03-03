@@ -1,6 +1,4 @@
 import { LayoutDashboard, Users, UserCheck, Store, Settings, LogOut } from "lucide-react";
-import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import {
   Sidebar,
@@ -16,22 +14,25 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 
-const navItems = [
-  { title: "Dashboard", url: "/crm", icon: LayoutDashboard },
-  { title: "Leads", url: "/crm/leads", icon: Users },
-  { title: "Hosts Ativos", url: "/crm/hosts", icon: UserCheck },
-  { title: "Lojistas", url: "/crm/lojistas", icon: Store },
-  { title: "Configurações", url: "/crm/settings", icon: Settings },
+export type CRMPage = "dashboard" | "leads" | "hosts" | "lojistas" | "settings";
+
+const navItems: { title: string; page: CRMPage; icon: any }[] = [
+  { title: "Dashboard", page: "dashboard", icon: LayoutDashboard },
+  { title: "Leads", page: "leads", icon: Users },
+  { title: "Hosts Ativos", page: "hosts", icon: UserCheck },
+  { title: "Lojistas", page: "lojistas", icon: Store },
+  { title: "Configurações", page: "settings", icon: Settings },
 ];
 
 interface CRMSidebarProps {
   onLogout: () => void;
+  activePage: CRMPage;
+  onNavigate: (page: CRMPage) => void;
 }
 
-export function CRMSidebar({ onLogout }: CRMSidebarProps) {
+export function CRMSidebar({ onLogout, activePage, onNavigate }: CRMSidebarProps) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const location = useLocation();
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
@@ -53,20 +54,15 @@ export function CRMSidebar({ onLogout }: CRMSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
-                const isActive = location.pathname === item.url || 
-                  (item.url === "/crm" && location.pathname === "/crm");
+                const isActive = activePage === item.page;
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink
-                        to={item.url}
-                        end={item.url === "/crm"}
-                        className={`hover:bg-sidebar-accent/50 transition-colors ${isActive ? "bg-sidebar-accent text-crm-purple font-medium" : ""}`}
-                        activeClassName="bg-sidebar-accent text-crm-purple font-medium"
-                      >
-                        <item.icon className={`mr-2 h-4 w-4 ${isActive ? "text-crm-purple" : ""}`} />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
+                    <SidebarMenuButton
+                      onClick={() => onNavigate(item.page)}
+                      className={`cursor-pointer transition-colors ${isActive ? "bg-sidebar-accent text-crm-purple font-medium" : "hover:bg-sidebar-accent/50"}`}
+                    >
+                      <item.icon className={`mr-2 h-4 w-4 ${isActive ? "text-crm-purple" : ""}`} />
+                      {!collapsed && <span>{item.title}</span>}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
