@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { Search, Download, RefreshCw, LogIn, ExternalLink, Copy, LogOut } from "lucide-react";
+import { Search, Download, RefreshCw, LogIn, ExternalLink, Copy, LogOut, Sparkles, Loader2 } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 type Lead = {
@@ -26,6 +26,8 @@ type Lead = {
   status: string;
   origem: string;
   created_at: string;
+  score_ia: number | null;
+  qualificacao_ia: string | null;
 };
 
 const statusOptions = [
@@ -49,6 +51,20 @@ const dorLabels: Record<string, string> = {
   dificuldade_vendas: "Vendas de expansões",
 };
 
+function getScoreColor(score: number | null) {
+  if (score === null) return "";
+  if (score >= 75) return "text-accent font-bold";
+  if (score >= 50) return "text-yellow-400";
+  return "text-muted-foreground";
+}
+
+function getScoreBg(score: number | null) {
+  if (score === null) return "";
+  if (score >= 75) return "bg-accent/15 border-accent/30";
+  if (score >= 50) return "bg-yellow-500/15 border-yellow-500/30";
+  return "bg-muted/50 border-border";
+}
+
 const CRM = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [filtered, setFiltered] = useState<Lead[]>([]);
@@ -59,6 +75,7 @@ const CRM = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
+  const [qualifyingIds, setQualifyingIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
@@ -127,14 +144,71 @@ const CRM = () => {
     }
   };
 
+  const qualifyLeads = async (ids: string[]) => {
+    setQualifyingIds((prev) => new Set([...prev, ...ids]));
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({ title: "Erro", description: "Sessão expirada", variant: "destructive" });
+        return;
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/qualify-leads`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ lead_ids: ids }),
+        }
+      );
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Erro ao qualificar");
+      }
+
+      const { results } = await response.json();
+      setLeads((prev) =>
+        prev.map((l) => {
+          const r = results?.find((r: any) => r.id === l.id);
+          return r ? { ...l, score_ia: r.score, qualificacao_ia: r.qualificacao } : l;
+        })
+      );
+      toast({ title: `${results?.length || 0} leads qualificados com IA!` });
+    } catch (err: any) {
+      toast({ title: "Erro", description: err.message, variant: "destructive" });
+    } finally {
+      setQualifyingIds((prev) => {
+        const next = new Set(prev);
+        ids.forEach((id) => next.delete(id));
+        return next;
+      });
+    }
+  };
+
+  const qualifyAll = () => {
+    const unqualified = filtered.filter((l) => l.score_ia === null || l.score_ia === undefined);
+    if (unqualified.length === 0) {
+      toast({ title: "Todos os leads já foram qualificados." });
+      return;
+    }
+    qualifyLeads(unqualified.map((l) => l.id));
+  };
+
   const exportCSV = () => {
-    const headers = ["Nome", "Empresa", "WhatsApp", "Volume/Mês", "Dor Principal", "Status", "Data"];
+    const headers = ["Nome", "Empresa", "WhatsApp", "Volume/Mês", "Dor Principal", "Score IA", "Qualificação IA", "Status", "Data"];
     const rows = filtered.map((l) => [
       l.nome,
       l.cidade,
       l.whatsapp,
       l.mesas_por_mes || "",
       dorLabels[l.maior_dor || ""] || l.maior_dor || "",
+      l.score_ia?.toString() || "",
+      l.qualificacao_ia || "",
       statusOptions.find((s) => s.value === l.status)?.label || l.status,
       new Date(l.created_at).toLocaleString("pt-BR"),
     ]);
@@ -151,7 +225,7 @@ const CRM = () => {
 
   const copyAll = () => {
     const text = filtered
-      .map((l) => `${l.nome}\t${l.cidade}\t${l.whatsapp}\t${l.mesas_por_mes || "-"}\t${dorLabels[l.maior_dor || ""] || "-"}\t${l.status}`)
+      .map((l) => `${l.nome}\t${l.cidade}\t${l.whatsapp}\t${l.mesas_por_mes || "-"}\t${dorLabels[l.maior_dor || ""] || "-"}\t${l.score_ia ?? "-"}\t${l.status}`)
       .join("\n");
     navigator.clipboard.writeText(text);
     toast({ title: "Dados copiados!" });
@@ -185,12 +259,15 @@ const CRM = () => {
   }
 
   // ─── STATS ────────────────────────────────
+  const avgScore = leads.filter((l) => l.score_ia !== null && l.score_ia !== undefined);
+  const avgScoreVal = avgScore.length > 0 ? Math.round(avgScore.reduce((a, l) => a + (l.score_ia || 0), 0) / avgScore.length) : null;
+
   const stats = [
     { label: "Total", value: leads.length, accent: false },
     { label: "Novos", value: leads.filter((l) => l.status === "novo").length, accent: false },
     { label: "Contatados", value: leads.filter((l) => l.status === "quente").length, accent: false },
     { label: "Fechados", value: leads.filter((l) => l.status === "convertido").length, accent: true },
-    { label: "Alto Volume (16+)", value: leads.filter((l) => l.mesas_por_mes === "30+" || l.mesas_por_mes === "16-30").length, accent: true },
+    { label: "Score Médio IA", value: avgScoreVal !== null ? avgScoreVal : "—", accent: true },
   ];
 
   // ─── DASHBOARD ────────────────────────────
@@ -204,6 +281,17 @@ const CRM = () => {
             <h1 className="text-sm font-serif font-bold text-foreground hidden sm:block">CRM — ABRIN 2026</h1>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={qualifyAll}
+              disabled={qualifyingIds.size > 0}
+              className="gap-2 text-accent hover:text-accent"
+              title="Qualificar leads sem score com IA"
+            >
+              {qualifyingIds.size > 0 ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              <span className="hidden sm:inline">Qualificar IA</span>
+            </Button>
             <Button variant="ghost" size="icon" onClick={fetchLeads} title="Atualizar">
               <RefreshCw className="h-4 w-4" />
             </Button>
@@ -275,6 +363,7 @@ const CRM = () => {
                     <TableHead className="font-sans text-[11px] text-muted-foreground uppercase tracking-widest">WhatsApp</TableHead>
                     <TableHead className="font-sans text-[11px] text-muted-foreground uppercase tracking-widest text-center">Volume</TableHead>
                     <TableHead className="font-sans text-[11px] text-muted-foreground uppercase tracking-widest">Dor Principal</TableHead>
+                    <TableHead className="font-sans text-[11px] text-muted-foreground uppercase tracking-widest text-center">Score IA</TableHead>
                     <TableHead className="font-sans text-[11px] text-muted-foreground uppercase tracking-widest">Status</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -282,6 +371,7 @@ const CRM = () => {
                   {filtered.map((lead) => {
                     const vol = volumeConfig[lead.mesas_por_mes || ""] || null;
                     const statusCfg = statusOptions.find((s) => s.value === lead.status);
+                    const isQualifying = qualifyingIds.has(lead.id);
                     return (
                       <TableRow key={lead.id} className="border-border hover:bg-card/40 transition-colors">
                         <TableCell>
@@ -313,6 +403,30 @@ const CRM = () => {
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground max-w-[180px] truncate">
                           {dorLabels[lead.maior_dor || ""] || lead.maior_dor || "—"}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {isQualifying ? (
+                            <Loader2 className="h-4 w-4 animate-spin mx-auto text-accent" />
+                          ) : lead.score_ia !== null && lead.score_ia !== undefined ? (
+                            <div className="flex flex-col items-center gap-1">
+                              <Badge variant="outline" className={`${getScoreBg(lead.score_ia)} text-xs px-3 py-1 ${getScoreColor(lead.score_ia)}`}>
+                                {lead.score_ia}
+                              </Badge>
+                              {lead.qualificacao_ia && (
+                                <span className="text-[10px] text-muted-foreground max-w-[140px] truncate block" title={lead.qualificacao_ia}>
+                                  {lead.qualificacao_ia}
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => qualifyLeads([lead.id])}
+                              className="text-accent/60 hover:text-accent transition-colors"
+                              title="Qualificar com IA"
+                            >
+                              <Sparkles className="h-4 w-4 mx-auto" />
+                            </button>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Select value={lead.status} onValueChange={(val) => updateStatus(lead.id, val)}>
