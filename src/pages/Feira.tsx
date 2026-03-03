@@ -92,20 +92,33 @@ const Feira = () => {
   const onSubmit = async (data: LeadFormData) => {
     setLoading(true);
     try {
+      const leadPayload = {
+        nome: data.nome,
+        empresa: data.empresa,
+        whatsapp: data.whatsapp,
+        instagram: data.instagram || null,
+        mesas_por_mes: data.mesas_por_mes,
+        maior_dor: data.maior_dor,
+        origem: "abrin_2026",
+      };
+
       const { error } = await supabase.from("leads" as any).insert([
         {
-          nome: data.nome,
+          ...leadPayload,
           email: `${data.whatsapp.replace(/\D/g, "")}@feira.local`,
-          whatsapp: data.whatsapp,
-          instagram: data.instagram || null,
           cidade: data.empresa,
           perfil: "lojista",
-          mesas_por_mes: data.mesas_por_mes,
-          maior_dor: data.maior_dor,
-          origem: "abrin_2026",
         },
       ]);
       if (error) throw error;
+
+      // Enviar para Make.com webhook (fire-and-forget)
+      fetch("https://hook.us2.make.com/p7nbf1ceeuf4pdraaltzrncdsr1ujgb1", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(leadPayload),
+      }).catch(() => {}); // não bloqueia o fluxo se falhar
+
       setSubmitted(true);
     } catch (err: any) {
       toast({
