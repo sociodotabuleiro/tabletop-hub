@@ -3,22 +3,25 @@ import AnimatedSection from "./AnimatedSection";
 
 const speakers = [
   {
+    quote: "Minhas campanhas de D&D não morrem mais na sessão zero. Quem paga a taxa da mesa, aparece pra jogar. Passei de 2 para 12 mesas por mês.",
+    name: "Henrique L.",
+    role: "Host Profissional · Mestre de RPG",
+    tag: "Mestragem",
+    color: "bg-primary",
+  },
+  {
     quote: "Meus pacientes com TDAH melhoraram a atenção sustentada em 40% após 8 sessões de RPG estruturado. A plataforma me deu os dados para provar isso.",
     name: "Dra. Mariana Alves",
     role: "Psicóloga Clínica · CRP 06/12345",
-    tag: "Neuropsicologia",
+    tag: "RPG Terapêutico",
+    color: "bg-accent",
   },
   {
-    quote: "Eu conduzia grupos terapêuticos com RPG há 5 anos, mas cobrava menos que uma sessão de terapia convencional. A 6degrees me mostrou que eu estava vendendo aspirina quando tinha a cura.",
-    name: "Rafael Moreira",
-    role: "Terapeuta Ocupacional · Mestre de RPG",
-    tag: "Grupos Terapêuticos",
-  },
-  {
-    quote: "Na escola, o RPG terapêutico reduziu episódios de bullying em 60%. Com a plataforma, consigo documentar cada sessão e apresentar resultados à diretoria.",
-    name: "Profa. Camila Rêgo",
-    role: "Pedagoga · Especialista em Inclusão",
-    tag: "Educação",
+    quote: "Transformei o espaço ocioso da loja em 15 mesas reserváveis por semana. O faturamento com eventos superou o de vendas de jogos.",
+    name: "Carlos Mendes",
+    role: "Proprietário · Loja Dado & Carta",
+    tag: "Loja & Espaço",
+    color: "bg-crm-blue",
   },
 ];
 
@@ -30,22 +33,20 @@ const Testimonials = () => (
           Quem já está na mesa
         </p>
         <h2 className="text-3xl md:text-5xl font-serif font-bold">
-          Profissionais que transformam{" "}
-          <span className="text-gradient-warm">dados em cura</span>
+          Três perfis, uma{" "}
+          <span className="text-gradient-warm">revolução</span>
         </h2>
       </AnimatedSection>
 
-      {/* Config-speaker-style cards */}
       <div className="grid md:grid-cols-3 gap-6">
         {speakers.map((s, i) => (
           <AnimatedSection key={i} delay={i * 0.15}>
             <div className="glass glass-hover rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300">
-              {/* Colored header bar — Config style */}
-              <div className={`h-2 w-full ${
-                i === 0 ? "bg-primary" : i === 1 ? "bg-accent" : "bg-crm-purple"
-              }`} />
+              <div className={`h-2 w-full ${s.color}`} />
               <div className="p-8 flex flex-col flex-1">
-                <span className="text-xs font-sans font-semibold tracking-[0.15em] uppercase text-primary mb-4 inline-block">
+                <span className={`text-xs font-sans font-semibold tracking-[0.15em] uppercase mb-4 inline-block ${
+                  i === 0 ? "text-primary" : i === 1 ? "text-accent" : "text-crm-blue"
+                }`}>
                   {s.tag}
                 </span>
                 <Quote className="text-primary/30 mb-3" size={28} />
