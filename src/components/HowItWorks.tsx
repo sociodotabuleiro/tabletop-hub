@@ -1,27 +1,34 @@
-import { MousePointerClick, QrCode, Star } from "lucide-react";
+import { CalendarCheck, Shield, BarChart3, Sparkles } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
 
-const steps = [
+const features = [
   {
-    icon: MousePointerClick,
-    step: "01",
-    title: "Crie a mesa em 2 cliques.",
-    desc: "Integração com o BoardGameGeek. Escolha o jogo, defina data, local e preço. Pronto.",
-    align: "left" as const,
+    icon: CalendarCheck,
+    label: "Agenda Inteligente",
+    title: "Crie sessões com checkout integrado.",
+    desc: "Defina datas, vagas, duração e preço. O paciente-jogador reserva e paga em segundos. Fim dos 'vou confirmar amanhã'.",
+    color: "bg-primary/10 text-primary",
   },
   {
-    icon: QrCode,
-    step: "02",
-    title: "Envie o link. Receba o Pix.",
-    desc: "Checkout rápido integrado. O jogador paga e confirma a presença em segundos.",
-    align: "right" as const,
+    icon: Shield,
+    label: "Prontuário Lúdico",
+    title: "Fichas de personagem que são fichas de evolução.",
+    desc: "Registre o progresso terapêutico dentro da narrativa do RPG. Cada sessão vira um capítulo documentado.",
+    color: "bg-accent/10 text-accent",
   },
   {
-    icon: Star,
-    step: "03",
-    title: "Jogue. Avalie. Repita.",
-    desc: "Sistema de reputação e badges. Bons jogadores e hosts são reconhecidos pela comunidade.",
-    align: "left" as const,
+    icon: BarChart3,
+    label: "Métricas de Impacto",
+    title: "Prove o valor do seu trabalho com dados.",
+    desc: "Dashboards com frequência, engajamento narrativo e evolução dos pacientes. Ideal para relatórios clínicos e institucionais.",
+    color: "bg-crm-blue/10 text-crm-blue",
+  },
+  {
+    icon: Sparkles,
+    label: "IA Assistente",
+    title: "Narrativas geradas. Relatórios automatizados.",
+    desc: "Nossa IA sugere ganchos narrativos baseados nos objetivos terapêuticos e gera resumos de sessão para o prontuário.",
+    color: "bg-crm-purple/10 text-crm-purple",
   },
 ];
 
@@ -32,31 +39,29 @@ const HowItWorks = () => (
         <p className="text-primary text-sm font-semibold tracking-[0.2em] uppercase mb-4 font-sans">
           Como Funciona
         </p>
-        <h2 className="text-3xl md:text-5xl font-serif font-bold">
-          Magia na mesa.{" "}
-          <span className="text-gradient-warm">Tecnologia nos bastidores.</span>
+        <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight max-w-3xl mx-auto">
+          Peggy Olson montaria{" "}
+          <span className="text-gradient-warm">a campanha perfeita.</span>
+          <br />
+          Nós montamos a plataforma.
         </h2>
       </AnimatedSection>
 
-      <div className="space-y-20">
-        {steps.map((s, i) => (
-          <AnimatedSection key={i} delay={0.1}>
-            <div className={`flex flex-col ${s.align === "right" ? "md:flex-row-reverse" : "md:flex-row"} items-center gap-10 md:gap-16`}>
-              {/* Text side */}
-              <div className="flex-1 text-center md:text-left">
-                <span className="text-6xl md:text-8xl font-serif font-bold text-primary/10">{s.step}</span>
-                <h3 className="text-2xl md:text-3xl font-serif font-bold -mt-4 mb-4">{s.title}</h3>
-                <p className="text-muted-foreground font-sans text-lg leading-relaxed max-w-md">{s.desc}</p>
-              </div>
-              {/* Mockup side */}
-              <div className="flex-1 w-full max-w-md">
-                <div className="glass rounded-2xl p-6 aspect-[4/3] flex items-center justify-center">
-                  <div className="text-center">
-                    <s.icon className="text-primary mx-auto mb-4" size={48} strokeWidth={1.5} />
-                    <p className="text-muted-foreground text-sm font-sans">Tela do {s.title.replace(".", "")}</p>
-                  </div>
+      {/* Config-style grid: 2x2 with large cards */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {features.map((f, i) => (
+          <AnimatedSection key={i} delay={i * 0.1}>
+            <div className="glass glass-hover rounded-2xl p-8 md:p-10 h-full transition-all duration-300 group flex flex-col">
+              <div className="flex items-center gap-3 mb-6">
+                <div className={`w-10 h-10 rounded-xl ${f.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                  <f.icon size={20} />
                 </div>
+                <span className="text-xs font-sans font-semibold tracking-[0.15em] uppercase text-muted-foreground">
+                  {f.label}
+                </span>
               </div>
+              <h3 className="text-xl md:text-2xl font-serif font-bold mb-3 leading-snug">{f.title}</h3>
+              <p className="text-muted-foreground font-sans leading-relaxed flex-1">{f.desc}</p>
             </div>
           </AnimatedSection>
         ))}

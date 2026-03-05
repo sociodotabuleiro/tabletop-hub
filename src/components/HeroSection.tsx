@@ -1,59 +1,69 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Dices } from "lucide-react";
-import { Link } from "react-router-dom";
-import heroBg from "@/assets/hero-bg.jpg";
+import { Heart } from "lucide-react";
+import heroBg from "@/assets/hero-therapeutic.jpg";
 
 const HeroSection = () => (
   <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
     {/* Background */}
     <div className="absolute inset-0">
-      <img src={heroBg} alt="Mesa de RPG iluminada por velas" className="w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+      <img src={heroBg} alt="Sessão de RPG terapêutico iluminada por velas" className="w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/60 to-background" />
     </div>
 
-    {/* Content */}
-    <div className="relative z-10 max-w-4xl mx-auto text-center px-4 py-32">
+    {/* Content — Config-style bold editorial */}
+    <div className="relative z-10 max-w-5xl mx-auto px-4 py-32">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
+        className="mb-8"
       >
-        <p className="text-primary font-sans text-sm font-semibold tracking-[0.2em] uppercase mb-6">
-          RPG & Board Games
-        </p>
+        <span className="inline-block px-4 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-sans font-semibold tracking-[0.2em] uppercase">
+          RPG Terapêutico · Profissionais
+        </span>
       </motion.div>
 
       <motion.h1
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.4 }}
-        className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight mb-6"
+        className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold leading-[0.95] mb-8"
       >
-        Não é sobre o jogo.{" "}
-        <span className="text-gradient-warm">É sobre a cadeira que não ficou vazia.</span>
+        Você não vende{" "}
+        <span className="text-gradient-warm italic">sessões.</span>
+        <br />
+        <span className="text-muted-foreground text-4xl md:text-5xl lg:text-6xl">
+          Você vende a chance de alguém se encontrar.
+        </span>
       </motion.h1>
 
       <motion.p
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.6 }}
-        className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 font-sans leading-relaxed"
+        className="text-lg md:text-xl text-muted-foreground max-w-2xl font-sans leading-relaxed mb-10"
       >
-        A organização de mesas de RPG e Board Games evoluiu. Acabe com os cancelamentos de última hora, monetize seu tempo como Mestre/Host e volte a focar no que importa: a aventura.
+        Psicólogos, educadores e terapeutas que usam RPG como ferramenta clínica merecem uma plataforma à altura do impacto que geram. Organize sessões, gerencie pacientes-jogadores e monetize sua prática — tudo em um só lugar.
       </motion.p>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.8 }}
+        className="flex flex-col sm:flex-row gap-4"
       >
-        <Link to="/feira">
+        <a href="#cadastro">
           <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-orange text-base px-8 py-6 rounded-full font-sans font-semibold gap-2">
-            <Dices size={20} />
-            Reúna sua Party (Testar Grátis)
+            <Heart size={20} />
+            Quero Profissionalizar Minha Prática
           </Button>
-        </Link>
+        </a>
+        <a href="#como-funciona">
+          <Button size="lg" variant="outline" className="border-muted-foreground/30 text-foreground hover:bg-secondary rounded-full px-8 py-6 text-base font-sans font-semibold">
+            Como Funciona
+          </Button>
+        </a>
       </motion.div>
     </div>
 
