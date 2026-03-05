@@ -3,36 +3,37 @@ import AnimatedSection from "./AnimatedSection";
 
 const cards = [
   {
-    icon: Brain,
-    title: "O Método é Poderoso. A Logística, Cruel.",
-    desc: "Você sabe que RPG transforma vidas. Mas gerenciar agendas, cobranças e fichas de evolução em planilhas soltas está consumindo o tempo que deveria ser dedicado ao paciente.",
-  },
-  {
     icon: CalendarOff,
     title: "Cancelamentos que Custam Caro",
-    desc: "Cada sessão vazia não é só receita perdida — é um paciente que interrompeu o processo terapêutico. Sem compromisso financeiro, o 'depois eu remarco' vira rotina.",
+    desc: "Cada mesa vazia é receita perdida — e, no caso terapêutico, um paciente que interrompeu o processo. Sem compromisso financeiro, o 'depois eu remarco' vira rotina.",
+  },
+  {
+    icon: Brain,
+    title: "Método Poderoso, Logística Cruel",
+    desc: "Você domina a arte de narrar, ensinar ou curar através do jogo. Mas gerenciar agendas, cobranças e fichas em planilhas soltas consome o tempo que deveria ser da mesa.",
   },
   {
     icon: DollarSign,
     title: "Você Cobra Menos do que Vale",
-    desc: "Psicólogos e educadores que dominam RPG terapêutico são raros. Mas sem uma estrutura profissional, é difícil justificar o preço de um serviço que muda vidas.",
+    desc: "Mestres, terapeutas e lojistas que vivem de jogos de mesa são profissionais raros. Sem estrutura, é difícil justificar o preço de um serviço que transforma vidas.",
   },
 ];
 
 const PainSection = () => (
   <section id="dor" className="section-padding">
     <div className="max-w-6xl mx-auto">
-      {/* Config-style bold heading with colored accent block */}
       <AnimatedSection className="mb-16">
         <div className="flex flex-col md:flex-row gap-8 items-start">
           <div className="w-full md:w-2/5">
             <div className="bg-primary/10 border border-primary/20 rounded-2xl p-8">
               <p className="text-primary text-sm font-semibold tracking-[0.2em] uppercase font-sans mb-2">
-                A Dor que Ninguém Vê
+                O Problema
               </p>
               <h2 className="text-3xl md:text-4xl font-serif font-bold leading-tight">
-                Don Draper diria:{" "}
-                <span className="text-gradient-warm italic">"você não tem um problema de demanda. Tem um problema de estrutura."</span>
+                Você não tem um problema de{" "}
+                <span className="text-gradient-warm italic">demanda.</span>{" "}
+                Tem um problema de{" "}
+                <span className="text-gradient-warm italic">estrutura.</span>
               </h2>
             </div>
           </div>

@@ -5,29 +5,29 @@ const features = [
   {
     icon: CalendarCheck,
     label: "Agenda Inteligente",
-    title: "Crie sessões com checkout integrado.",
-    desc: "Defina datas, vagas, duração e preço. O paciente-jogador reserva e paga em segundos. Fim dos 'vou confirmar amanhã'.",
+    title: "Sessões com checkout integrado.",
+    desc: "Defina datas, vagas, duração e preço. O jogador ou paciente reserva e paga em segundos via Pix. Fim do 'vou confirmar amanhã'.",
     color: "bg-primary/10 text-primary",
   },
   {
     icon: Shield,
-    label: "Prontuário Lúdico",
-    title: "Fichas de personagem que são fichas de evolução.",
-    desc: "Registre o progresso terapêutico dentro da narrativa do RPG. Cada sessão vira um capítulo documentado.",
+    label: "Gestão Completa",
+    title: "Campanhas, fichas e prontuários em um só lugar.",
+    desc: "Para mestres: gestão de campanhas e personagens. Para terapeutas: prontuário lúdico com evolução documentada. Para lojistas: controle de mesas e ocupação.",
     color: "bg-accent/10 text-accent",
   },
   {
     icon: BarChart3,
-    label: "Métricas de Impacto",
+    label: "Métricas Reais",
     title: "Prove o valor do seu trabalho com dados.",
-    desc: "Dashboards com frequência, engajamento narrativo e evolução dos pacientes. Ideal para relatórios clínicos e institucionais.",
+    desc: "Dashboards de frequência, engajamento, faturamento e — para terapeutas — evolução clínica dos pacientes. Relatórios prontos para apresentar.",
     color: "bg-crm-blue/10 text-crm-blue",
   },
   {
     icon: Sparkles,
     label: "IA Assistente",
     title: "Narrativas geradas. Relatórios automatizados.",
-    desc: "Nossa IA sugere ganchos narrativos baseados nos objetivos terapêuticos e gera resumos de sessão para o prontuário.",
+    desc: "Nossa IA sugere ganchos narrativos, gera resumos de sessão e cria relatórios de impacto. Mais tempo na mesa, menos tempo na planilha.",
     color: "bg-crm-purple/10 text-crm-purple",
   },
 ];
@@ -40,14 +40,11 @@ const HowItWorks = () => (
           Como Funciona
         </p>
         <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight max-w-3xl mx-auto">
-          Peggy Olson montaria{" "}
-          <span className="text-gradient-warm">a campanha perfeita.</span>
-          <br />
-          Nós montamos a plataforma.
+          Tecnologia nos bastidores.{" "}
+          <span className="text-gradient-warm">Magia na mesa.</span>
         </h2>
       </AnimatedSection>
 
-      {/* Config-style grid: 2x2 with large cards */}
       <div className="grid md:grid-cols-2 gap-6">
         {features.map((f, i) => (
           <AnimatedSection key={i} delay={i * 0.1}>
