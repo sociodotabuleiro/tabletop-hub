@@ -30,8 +30,7 @@ const QRCodeSection = () => {
                 <span className="text-gradient-warm">entre na mesa.</span>
               </h2>
               <p className="text-muted-foreground font-sans text-base md:text-lg leading-relaxed">
-                Aponte a câmera do seu celular para o QR Code e cadastre-se
-                agora mesmo para acesso antecipado ao Hub.
+                Aponte a câmera do celular para o QR Code e cadastre-se agora. Você será um dos primeiros profissionais de RPG terapêutico a ter acesso à plataforma.
               </p>
               <p className="text-xs text-muted-foreground font-sans opacity-60 font-mono">
                 {feiraUrl}

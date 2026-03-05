@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -14,14 +13,14 @@ const Navbar = () => {
         </a>
 
         <div className="hidden md:flex items-center gap-8">
-          <a href="#dor" className="text-sm text-muted-foreground hover:text-foreground transition-colors">A Dor</a>
-          <a href="#como-funciona" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Como Funciona</a>
-          <a href="#comunidade" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Comunidade</a>
-          <Link to="/feira">
+          <a href="#dor" className="text-sm text-muted-foreground hover:text-foreground transition-colors">O Problema</a>
+          <a href="#como-funciona" className="text-sm text-muted-foreground hover:text-foreground transition-colors">A Solução</a>
+          <a href="#comunidade" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Profissionais</a>
+          <a href="#cadastro">
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-orange">
-              Testar Grátis
+              Quero Acesso
             </Button>
-          </Link>
+          </a>
         </div>
 
         <button onClick={() => setOpen(!open)} className="md:hidden text-foreground">
@@ -31,12 +30,12 @@ const Navbar = () => {
 
       {open && (
         <div className="md:hidden glass border-t border-border px-4 py-4 flex flex-col gap-4">
-          <a href="#dor" onClick={() => setOpen(false)} className="text-sm text-muted-foreground">A Dor</a>
-          <a href="#como-funciona" onClick={() => setOpen(false)} className="text-sm text-muted-foreground">Como Funciona</a>
-          <a href="#comunidade" onClick={() => setOpen(false)} className="text-sm text-muted-foreground">Comunidade</a>
-          <Link to="/feira" onClick={() => setOpen(false)}>
-            <Button size="sm" className="bg-primary text-primary-foreground w-full">Testar Grátis</Button>
-          </Link>
+          <a href="#dor" onClick={() => setOpen(false)} className="text-sm text-muted-foreground">O Problema</a>
+          <a href="#como-funciona" onClick={() => setOpen(false)} className="text-sm text-muted-foreground">A Solução</a>
+          <a href="#comunidade" onClick={() => setOpen(false)} className="text-sm text-muted-foreground">Profissionais</a>
+          <a href="#cadastro" onClick={() => setOpen(false)}>
+            <Button size="sm" className="bg-primary text-primary-foreground w-full">Quero Acesso</Button>
+          </a>
         </div>
       )}
     </nav>

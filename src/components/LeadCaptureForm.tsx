@@ -24,17 +24,19 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const perfilOptions = [
-  { value: "organizador", label: "Organizador de Board Games" },
-  { value: "mestre_rpg", label: "Mestre de RPG" },
-  { value: "lojista", label: "Lojista" },
-  { value: "jogador", label: "Apenas Jogador" },
+  { value: "psicologo", label: "Psicólogo(a) / Terapeuta" },
+  { value: "educador", label: "Educador(a) / Pedagogo(a)" },
+  { value: "terapeuta_ocupacional", label: "Terapeuta Ocupacional" },
+  { value: "mestre_rpg", label: "Mestre de RPG Terapêutico" },
+  { value: "estudante", label: "Estudante da Área" },
 ];
 
 const perfilToLeadProfile: Record<string, string> = {
-  organizador: "host_mestre",
+  psicologo: "host_mestre",
+  educador: "host_mestre",
+  terapeuta_ocupacional: "host_mestre",
   mestre_rpg: "host_mestre",
-  lojista: "lojista",
-  jogador: "jogador",
+  estudante: "jogador",
 };
 
 const LeadCaptureForm = () => {
@@ -43,27 +45,12 @@ const LeadCaptureForm = () => {
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      nome: "",
-      email: "",
-      instagram: "",
-      perfil: "",
-      detalhes: "",
-    },
+    defaultValues: { nome: "", email: "", instagram: "", perfil: "", detalhes: "" },
   });
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
-      const webhookPayload = {
-        nome: data.nome,
-        email: data.email,
-        instagram: data.instagram || null,
-        perfil: data.perfil,
-        detalhes: data.detalhes || null,
-      };
-
-      // Salvar no banco
       const { error } = await supabase.from("leads" as any).insert([
         {
           nome: data.nome,
@@ -73,16 +60,22 @@ const LeadCaptureForm = () => {
           cidade: "",
           perfil: perfilToLeadProfile[data.perfil] || "outro",
           como_organiza: data.detalhes || null,
-          origem: "landing_page",
+          origem: "landing_rpg_terapeutico",
         },
       ]);
       if (error) throw error;
 
-      // Enviar para Make.com (fire-and-forget)
       fetch(MAKE_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(webhookPayload),
+        body: JSON.stringify({
+          nome: data.nome,
+          email: data.email,
+          instagram: data.instagram || null,
+          perfil: data.perfil,
+          detalhes: data.detalhes || null,
+          origem: "rpg_terapeutico",
+        }),
       }).catch(() => {});
 
       setSuccess(true);
@@ -109,12 +102,11 @@ const LeadCaptureForm = () => {
       <div className="max-w-2xl mx-auto w-full space-y-8">
         <div className="text-center space-y-3">
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground leading-tight">
-            Faça parte da{" "}
-            <span className="text-gradient-warm">revolução.</span>
+            Sua mesa está{" "}
+            <span className="text-gradient-warm">reservada.</span>
           </h2>
           <p className="text-base text-muted-foreground font-sans max-w-lg mx-auto">
-            Cadastre-se e nossa IA vai analisar seu perfil para te mostrar o
-            melhor caminho.
+            Cadastre-se para acesso antecipado à plataforma que vai profissionalizar o RPG terapêutico.
           </p>
         </div>
 
@@ -123,107 +115,72 @@ const LeadCaptureForm = () => {
             <div className="inline-flex items-center justify-center h-20 w-20 rounded-full border-2 border-accent/30 mx-auto">
               <CheckCircle className="h-10 w-10 text-accent" />
             </div>
-            <h3 className="text-2xl font-serif font-bold text-foreground">
-              Cadastro enviado!
-            </h3>
+            <h3 className="text-2xl font-serif font-bold text-foreground">Cadastro enviado!</h3>
             <p className="text-muted-foreground font-sans">
-              Nossa IA está analisando seu perfil. Falaremos em breve.
+              Você está na lista de acesso antecipado. Falaremos em breve com os próximos passos.
             </p>
           </div>
         ) : (
           <div className="glass rounded-2xl p-6 md:p-10 border border-border">
             <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
-              >
-                {/* Nome */}
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
                   name="nome"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={labelClass}>
-                        Nome Completo
-                      </FormLabel>
+                      <FormLabel className={labelClass}>Nome Completo</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Seu nome"
-                          className={inputClass}
-                          {...field}
-                        />
+                        <Input placeholder="Seu nome" className={inputClass} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                {/* Email */}
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={labelClass}>E-mail</FormLabel>
+                      <FormLabel className={labelClass}>E-mail Profissional</FormLabel>
                       <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="seu@email.com"
-                          className={inputClass}
-                          {...field}
-                        />
+                        <Input type="email" placeholder="seu@email.com" className={inputClass} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                {/* Instagram */}
                 <FormField
                   control={form.control}
                   name="instagram"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={labelClass}>
-                        Perfil do Instagram (opcional)
-                      </FormLabel>
+                      <FormLabel className={labelClass}>Instagram (opcional)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="@seu.perfil"
-                          className={inputClass}
-                          {...field}
-                        />
+                        <Input placeholder="@seu.perfil" className={inputClass} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                {/* Perfil */}
                 <FormField
                   control={form.control}
                   name="perfil"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={labelClass}>
-                        Qual é o seu perfil?
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                      <FormLabel className={labelClass}>Qual é a sua área de atuação?</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
-                          <SelectTrigger
-                            className={`${inputClass} text-left`}
-                          >
+                          <SelectTrigger className={`${inputClass} text-left`}>
                             <SelectValue placeholder="Selecione..." />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {perfilOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </SelectItem>
+                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -232,18 +189,15 @@ const LeadCaptureForm = () => {
                   )}
                 />
 
-                {/* Detalhes */}
                 <FormField
                   control={form.control}
                   name="detalhes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={labelClass}>
-                        Conta mais sobre você (opcional)
-                      </FormLabel>
+                      <FormLabel className={labelClass}>Como você usa RPG na sua prática? (opcional)</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Quantas mesas organiza por mês? Já cobra ingressos? Qual seu jogo favorito?"
+                          placeholder="Conte sobre sua experiência com RPG terapêutico, público atendido, frequência das sessões..."
                           className="min-h-[100px] text-base rounded-xl border-border bg-card/50 placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
                           {...field}
                         />
@@ -253,7 +207,6 @@ const LeadCaptureForm = () => {
                   )}
                 />
 
-                {/* Submit */}
                 <Button
                   type="submit"
                   size="lg"
@@ -267,14 +220,14 @@ const LeadCaptureForm = () => {
                     </>
                   ) : (
                     <>
-                      Quero Participar
+                      Garantir Meu Acesso Antecipado
                       <ArrowRight className="h-6 w-6" />
                     </>
                   )}
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center font-sans opacity-60">
-                  Seus dados estão seguros. Usaremos apenas para contato.
+                  Seus dados estão seguros. Usaremos apenas para contato sobre a plataforma.
                 </p>
               </form>
             </Form>
