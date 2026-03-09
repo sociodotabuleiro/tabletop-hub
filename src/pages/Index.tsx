@@ -18,6 +18,7 @@ const Index = () => (
     <ServicesSection />
     <HowItWorks />
     <Testimonials />
+    <PartnersSection />
     <QRCodeSection />
     <LeadCaptureForm />
     <FinalCTA />
