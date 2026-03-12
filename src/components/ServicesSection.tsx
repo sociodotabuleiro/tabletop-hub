@@ -18,9 +18,9 @@ const services = [
     title: "RPG Terapêutico",
     desc: "Plataforma clínica para profissionais que usam RPG como ferramenta terapêutica. Organize sessões, registre evolução dos pacientes-jogadores e gere relatórios de impacto com dados reais.",
     features: ["Prontuário lúdico", "Métricas de evolução", "Relatórios clínicos", "IA assistente narrativa"],
-    colorBar: "bg-accent",
-    colorTag: "text-accent",
-    colorBg: "bg-accent/10",
+    colorBar: "bg-secondary",
+    colorTag: "text-secondary",
+    colorBg: "bg-secondary/10",
   },
   {
     icon: Store,
@@ -28,9 +28,9 @@ const services = [
     title: "Reserva de Mesas",
     desc: "Lojistas e espaços de jogos oferecem mesas para reserva online. Monetize seu espaço físico, atraia novos clientes e transforme partidas em vendas de jogos e expansões.",
     features: ["Reserva online 24h", "Vitrine de jogos integrada", "Dashboard de ocupação", "Vendas no contexto da mesa"],
-    colorBar: "bg-crm-blue",
-    colorTag: "text-crm-blue",
-    colorBg: "bg-crm-blue/10",
+    colorBar: "bg-crm-green",
+    colorTag: "text-crm-green",
+    colorBg: "bg-crm-green/10",
   },
 ];
 
