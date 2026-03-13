@@ -9,9 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
-import { CheckCircle, ArrowRight, Loader2 } from "lucide-react";
-
-const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/p7nbf1ceeuf4pdraaltzrncdsr1ujgb1";
+import { toast as sonnerToast } from "sonner";
+import { CheckCircle, ArrowRight, Loader2, Copy, Sparkles, Gift } from "lucide-react";
 
 const formSchema = z.object({
   nome: z.string().trim().min(2, "Precisamos do seu nome.").max(100),
