@@ -10,12 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
-import { CheckCircle, ArrowRight, Loader2, Copy, Sparkles, Gift } from "lucide-react";
+import { CheckCircle, ArrowRight, Loader2, Copy, Sparkles, Gift, MessageCircle } from "lucide-react";
 
 const formSchema = z.object({
   nome: z.string().trim().min(2, "Precisamos do seu nome.").max(100),
   email: z.string().trim().email("E-mail inválido.").max(255),
-  instagram: z.string().trim().max(100).optional().or(z.literal("")),
+  whatsapp: z.string().trim().min(10, "WhatsApp com DDD (mínimo 10 dígitos).").max(20),
+  instagram: z.string().trim().min(2, "Informe seu Instagram.").max(100),
   perfil: z.string({ required_error: "Selecione seu perfil." }),
   detalhes: z.string().trim().max(1000).optional().or(z.literal("")),
 });
@@ -40,14 +41,24 @@ const perfilToLeadProfile: Record<string, string> = {
 
 const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/p7nbf1ceeuf4pdraaltzrncdsr1ujgb1";
 
+const buildWhatsAppLink = (phone: string, nome: string) => {
+  const cleanPhone = phone.replace(/\D/g, "");
+  const phoneWithCountry = cleanPhone.startsWith("55") ? cleanPhone : `55${cleanPhone}`;
+  const message = encodeURIComponent(
+    `Olá ${nome}! 🎲 Obrigado por se cadastrar no Sócio do Tabuleiro. Estamos preparando uma experiência incrível para você. Em breve entraremos em contato com mais detalhes!`
+  );
+  return `https://api.whatsapp.com/send/?phone=${phoneWithCountry}&text=${message}&type=phone_number&app_absent=0`;
+};
+
 const LeadCaptureForm = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [couponCode, setCouponCode] = useState("");
+  const [whatsappLink, setWhatsappLink] = useState("");
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: { nome: "", email: "", instagram: "", perfil: "", detalhes: "" },
+    defaultValues: { nome: "", email: "", whatsapp: "", instagram: "", perfil: "", detalhes: "" },
   });
 
   const onSubmit = async (data: FormData) => {
@@ -57,8 +68,8 @@ const LeadCaptureForm = () => {
         {
           nome: data.nome,
           email: data.email,
-          instagram: data.instagram || null,
-          whatsapp: "",
+          whatsapp: data.whatsapp,
+          instagram: data.instagram,
           cidade: "",
           perfil: perfilToLeadProfile[data.perfil] || "outro",
           como_organiza: data.detalhes || null,
@@ -68,6 +79,7 @@ const LeadCaptureForm = () => {
       if (error) throw error;
 
       setCouponCode((inserted as any)?.cupom || "");
+      setWhatsappLink(buildWhatsAppLink(data.whatsapp, data.nome));
 
       fetch(MAKE_WEBHOOK_URL, {
         method: "POST",
@@ -75,9 +87,8 @@ const LeadCaptureForm = () => {
         body: JSON.stringify({
           nome: data.nome,
           email: data.email,
-          instagram: data.instagram || null,
-          perfil: data.perfil,
-          detalhes: data.detalhes || null,
+          telefone: data.whatsapp,
+          instagram: data.instagram,
         }),
       }).catch(() => {});
 
@@ -154,6 +165,18 @@ const LeadCaptureForm = () => {
               </div>
             )}
 
+            {whatsappLink && (
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white font-sans font-semibold transition-all active:scale-95"
+              >
+                <MessageCircle className="h-5 w-5" />
+                Falar conosco no WhatsApp
+              </a>
+            )}
+
             <Button
               variant="ghost"
               onClick={() => setSuccess(false)}
@@ -182,9 +205,17 @@ const LeadCaptureForm = () => {
                   </FormItem>
                 )} />
 
+                <FormField control={form.control} name="whatsapp" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={labelClass}>WhatsApp</FormLabel>
+                    <FormControl><Input type="tel" placeholder="(11) 99999-9999" className={inputClass} {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+
                 <FormField control={form.control} name="instagram" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={labelClass}>Instagram (opcional)</FormLabel>
+                    <FormLabel className={labelClass}>Instagram</FormLabel>
                     <FormControl><Input placeholder="@seu.perfil" className={inputClass} {...field} /></FormControl>
                     <FormMessage />
                   </FormItem>
