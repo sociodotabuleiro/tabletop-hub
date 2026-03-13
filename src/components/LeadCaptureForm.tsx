@@ -53,7 +53,7 @@ const LeadCaptureForm = () => {
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
-      const { error } = await supabase.from("leads" as any).insert([
+      const { data: inserted, error } = await supabase.from("leads" as any).insert([
         {
           nome: data.nome,
           email: data.email,
@@ -64,8 +64,10 @@ const LeadCaptureForm = () => {
           como_organiza: data.detalhes || null,
           origem: "landing_page",
         },
-      ]);
+      ]).select("cupom").maybeSingle();
       if (error) throw error;
+
+      setCouponCode((inserted as any)?.cupom || "");
 
       fetch(MAKE_WEBHOOK_URL, {
         method: "POST",
@@ -81,7 +83,6 @@ const LeadCaptureForm = () => {
 
       setSuccess(true);
       form.reset();
-      setTimeout(() => setSuccess(false), 5000);
     } catch (err: any) {
       toast({
         title: "Erro ao enviar",
