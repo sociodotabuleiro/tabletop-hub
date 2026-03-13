@@ -19,7 +19,6 @@ const Index = () => (
     <HowItWorks />
     <Testimonials />
     <PartnersSection />
-    <QRCodeSection />
     <LeadCaptureForm />
     <FinalCTA />
     <Footer />
