@@ -38,9 +38,12 @@ const perfilToLeadProfile: Record<string, string> = {
   jogador: "jogador",
 };
 
+const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/p7nbf1ceeuf4pdraaltzrncdsr1ujgb1";
+
 const LeadCaptureForm = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
