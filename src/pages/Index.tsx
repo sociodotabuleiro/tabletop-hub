@@ -5,7 +5,6 @@ import ServicesSection from "@/components/ServicesSection";
 import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
 import PartnersSection from "@/components/PartnersSection";
-import QRCodeSection from "@/components/QRCodeSection";
 import LeadCaptureForm from "@/components/LeadCaptureForm";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
@@ -19,7 +18,6 @@ const Index = () => (
     <HowItWorks />
     <Testimonials />
     <PartnersSection />
-    <QRCodeSection />
     <LeadCaptureForm />
     <FinalCTA />
     <Footer />
