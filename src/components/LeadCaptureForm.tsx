@@ -94,6 +94,14 @@ const LeadCaptureForm = () => {
     }
   };
 
+  const copyCoupon = () => {
+    navigator.clipboard.writeText(couponCode).then(() => {
+      sonnerToast.success("Cupom copiado!");
+    }).catch(() => {
+      sonnerToast.info(`Seu cupom: ${couponCode}`);
+    });
+  };
+
   const inputClass =
     "h-14 text-base rounded-xl border-border bg-card/50 placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all";
   const labelClass =
@@ -121,6 +129,38 @@ const LeadCaptureForm = () => {
             <p className="text-muted-foreground font-sans">
               Você está na lista de acesso antecipado. Falaremos em breve.
             </p>
+
+            {couponCode && (
+              <div className="glass rounded-xl p-6 border border-primary/30 space-y-3 glow-orange">
+                <div className="flex items-center justify-center gap-2 text-primary">
+                  <Gift className="h-5 w-5" />
+                  <span className="text-xs font-sans font-bold uppercase tracking-wider">
+                    Seu cupom exclusivo
+                  </span>
+                </div>
+                <button
+                  onClick={copyCoupon}
+                  className="group flex items-center justify-center gap-3 mx-auto px-6 py-3 rounded-xl border-2 border-dashed border-primary/50 bg-primary/5 hover:bg-primary/10 transition-all active:scale-95"
+                >
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <span className="text-xl md:text-2xl font-mono font-bold tracking-[0.2em] text-foreground select-all">
+                    {couponCode}
+                  </span>
+                  <Copy className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </button>
+                <p className="text-xs text-muted-foreground font-sans opacity-70">
+                  Toque para copiar
+                </p>
+              </div>
+            )}
+
+            <Button
+              variant="ghost"
+              onClick={() => setSuccess(false)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Fazer novo cadastro →
+            </Button>
           </div>
         ) : (
           <div className="glass rounded-2xl p-6 md:p-10 border border-border">
