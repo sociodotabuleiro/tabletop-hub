@@ -13,16 +13,6 @@ const services = [
     colorBg: "bg-primary/10",
   },
   {
-    icon: Brain,
-    tag: "Para Terapeutas & Educadores",
-    title: "RPG Terapêutico",
-    desc: "Plataforma clínica para profissionais que usam RPG como ferramenta terapêutica. Organize sessões, registre evolução dos pacientes-jogadores e gere relatórios de impacto com dados reais.",
-    features: ["Prontuário lúdico", "Métricas de evolução", "Relatórios clínicos", "IA assistente narrativa"],
-    colorBar: "bg-secondary",
-    colorTag: "text-secondary",
-    colorBg: "bg-secondary/10",
-  },
-  {
     icon: Store,
     tag: "Para Lojas & Espaços",
     title: "Reserva de Mesas",
