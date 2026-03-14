@@ -28,7 +28,7 @@ const HeroSection = () => (
         className="mb-6"
       >
         <span className="inline-block px-4 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-sans font-semibold tracking-[0.2em] uppercase">
-          Mestres · Terapeutas · Lojistas
+          Mestres · Jogadores · Lojistas
         </span>
       </motion.div>
 
