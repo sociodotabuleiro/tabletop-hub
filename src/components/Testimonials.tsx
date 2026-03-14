@@ -10,13 +10,6 @@ const speakers = [
     color: "bg-primary",
   },
   {
-    quote: "Meus pacientes com TDAH melhoraram a atenção sustentada em 40% após 8 sessões de RPG estruturado. A plataforma me deu os dados para provar isso.",
-    name: "Dra. Mariana Alves",
-    role: "Psicóloga Clínica · CRP 06/12345",
-    tag: "RPG Terapêutico",
-    color: "bg-accent",
-  },
-  {
     quote: "Transformei o espaço ocioso da loja em 15 mesas reserváveis por semana. O faturamento com eventos superou o de vendas de jogos.",
     name: "Carlos Mendes",
     role: "Proprietário · Loja Dado & Carta",
