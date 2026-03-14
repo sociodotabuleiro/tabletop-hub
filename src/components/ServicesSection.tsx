@@ -39,7 +39,7 @@ const ServicesSection = () => (
         </h2>
       </AnimatedSection>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {services.map((s, i) => (
           <AnimatedSection key={i} delay={i * 0.15}>
             <div className="glass glass-hover rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 group">
