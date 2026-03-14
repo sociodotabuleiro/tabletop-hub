@@ -1,4 +1,4 @@
-import { Swords, Brain, Store } from "lucide-react";
+import { Swords, Store } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
 
 const services = [
