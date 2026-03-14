@@ -15,7 +15,7 @@ const cards = [
   {
     icon: DollarSign,
     title: "Você Cobra Menos do que Vale",
-    desc: "Mestres, terapeutas e lojistas que vivem de jogos de mesa são profissionais raros. Sem estrutura, é difícil justificar o preço de um serviço que transforma vidas.",
+    desc: "Mestres e lojistas que vivem de jogos de mesa são profissionais raros. Sem estrutura, é difícil justificar o preço de um serviço que transforma experiências.",
   },
 ];
 

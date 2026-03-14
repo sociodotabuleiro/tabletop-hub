@@ -31,8 +31,6 @@ const perfilOptions = [
 
 const perfilToLeadProfile: Record<string, string> = {
   mestre_rpg: "host_mestre",
-  psicologo: "host_mestre",
-  educador: "host_mestre",
   lojista: "lojista",
   jogador: "jogador",
 };

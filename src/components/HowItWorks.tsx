@@ -20,7 +20,7 @@ const features = [
     icon: BarChart3,
     label: "Métricas Reais",
     title: "Prove o valor do seu trabalho com dados.",
-    desc: "Dashboards de frequência, engajamento, faturamento e — para terapeutas — evolução clínica dos pacientes. Relatórios prontos para apresentar.",
+    desc: "Dashboards de frequência, engajamento e faturamento. Relatórios prontos para apresentar.",
     color: "bg-crm-blue/10 text-crm-blue",
   },
   {

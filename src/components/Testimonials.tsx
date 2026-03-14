@@ -38,7 +38,7 @@ const Testimonials = () => (
               <div className={`h-2 w-full ${s.color}`} />
               <div className="p-8 flex flex-col flex-1">
                 <span className={`text-xs font-sans font-semibold tracking-[0.15em] uppercase mb-4 inline-block ${
-                  i === 0 ? "text-primary" : i === 1 ? "text-accent" : "text-crm-blue"
+                  i === 0 ? "text-primary" : "text-crm-blue"
                 }`}>
                   {s.tag}
                 </span>

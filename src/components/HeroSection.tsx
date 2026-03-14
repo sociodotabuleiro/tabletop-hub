@@ -52,7 +52,7 @@ const HeroSection = () => (
         transition={{ duration: 0.8, delay: 0.7 }}
         className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-sans leading-relaxed mb-10"
       >
-        Sistema de mestragem para RPG e Board Games. Plataforma clínica para RPG terapêutico. Reserva de mesas para lojas. Três serviços, uma missão: profissionalizar quem vive de jogos de mesa.
+        Sistema de mestragem para RPG e Board Games. Reserva de mesas para lojas. Dois serviços, uma missão: profissionalizar quem vive de jogos de mesa.
       </motion.p>
 
       <motion.div

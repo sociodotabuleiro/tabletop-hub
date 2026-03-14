@@ -15,7 +15,7 @@ const FinalCTA = () => (
           Você vem?
         </h2>
         <p className="text-lg text-muted-foreground font-sans mb-10 max-w-xl mx-auto">
-          Seja mestre, terapeuta ou lojista — cadastre-se agora e seja um dos primeiros a profissionalizar sua mesa.
+          Seja mestre, jogador ou lojista — cadastre-se agora e seja um dos primeiros a profissionalizar sua mesa.
         </p>
         <a href="#cadastro">
           <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-purple rounded-full px-10 py-6 text-base font-sans font-semibold gap-2">
