@@ -26,7 +26,7 @@ const Testimonials = () => (
           Quem já está na mesa
         </p>
         <h2 className="text-3xl md:text-5xl font-serif font-bold">
-          Três perfis, uma{" "}
+          Dois perfis, uma{" "}
           <span className="text-gradient-warm">revolução</span>
         </h2>
       </AnimatedSection>
