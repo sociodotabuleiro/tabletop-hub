@@ -1,4 +1,4 @@
-import { Swords, Brain, Store } from "lucide-react";
+import { Swords, Store } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
 
 const services = [
@@ -11,16 +11,6 @@ const services = [
     colorBar: "bg-primary",
     colorTag: "text-primary",
     colorBg: "bg-primary/10",
-  },
-  {
-    icon: Brain,
-    tag: "Para Terapeutas & Educadores",
-    title: "RPG Terapêutico",
-    desc: "Plataforma clínica para profissionais que usam RPG como ferramenta terapêutica. Organize sessões, registre evolução dos pacientes-jogadores e gere relatórios de impacto com dados reais.",
-    features: ["Prontuário lúdico", "Métricas de evolução", "Relatórios clínicos", "IA assistente narrativa"],
-    colorBar: "bg-secondary",
-    colorTag: "text-secondary",
-    colorBg: "bg-secondary/10",
   },
   {
     icon: Store,
@@ -49,7 +39,7 @@ const ServicesSection = () => (
         </h2>
       </AnimatedSection>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {services.map((s, i) => (
           <AnimatedSection key={i} delay={i * 0.15}>
             <div className="glass glass-hover rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 group">
