@@ -12,15 +12,15 @@ const features = [
   {
     icon: Shield,
     label: "Gestão Completa",
-    title: "Campanhas, fichas e prontuários em um só lugar.",
-    desc: "Para mestres: gestão de campanhas e personagens. Para terapeutas: prontuário lúdico com evolução documentada. Para lojistas: controle de mesas e ocupação.",
+    title: "Campanhas, fichas e reservas em um só lugar.",
+    desc: "Para mestres: gestão de campanhas e personagens. Para lojistas: controle de mesas e ocupação. Para jogadores: encontre mesas e reserve com facilidade.",
     color: "bg-accent/10 text-accent",
   },
   {
     icon: BarChart3,
     label: "Métricas Reais",
     title: "Prove o valor do seu trabalho com dados.",
-    desc: "Dashboards de frequência, engajamento, faturamento e — para terapeutas — evolução clínica dos pacientes. Relatórios prontos para apresentar.",
+    desc: "Dashboards de frequência, engajamento e faturamento. Relatórios prontos para apresentar.",
     color: "bg-crm-blue/10 text-crm-blue",
   },
   {

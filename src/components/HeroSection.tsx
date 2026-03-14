@@ -28,7 +28,7 @@ const HeroSection = () => (
         className="mb-6"
       >
         <span className="inline-block px-4 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-sans font-semibold tracking-[0.2em] uppercase">
-          Mestres · Terapeutas · Lojistas
+          Mestres · Jogadores · Lojistas
         </span>
       </motion.div>
 
@@ -52,7 +52,7 @@ const HeroSection = () => (
         transition={{ duration: 0.8, delay: 0.7 }}
         className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-sans leading-relaxed mb-10"
       >
-        Sistema de mestragem para RPG e Board Games. Plataforma clínica para RPG terapêutico. Reserva de mesas para lojas. Três serviços, uma missão: profissionalizar quem vive de jogos de mesa.
+        Sistema de mestragem para RPG e Board Games. Reserva de mesas para lojas. Dois serviços, uma missão: profissionalizar quem vive de jogos de mesa.
       </motion.p>
 
       <motion.div

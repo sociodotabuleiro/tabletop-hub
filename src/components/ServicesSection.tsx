@@ -29,7 +29,7 @@ const ServicesSection = () => (
     <div className="max-w-6xl mx-auto">
       <AnimatedSection className="text-center mb-16">
         <p className="text-primary text-sm font-semibold tracking-[0.2em] uppercase mb-4 font-sans">
-          Três Serviços, Uma Plataforma
+          Dois Serviços, Uma Plataforma
         </p>
         <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight max-w-3xl mx-auto">
           Cada mesa tem uma{" "}

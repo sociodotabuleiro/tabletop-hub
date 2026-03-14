@@ -10,13 +10,6 @@ const speakers = [
     color: "bg-primary",
   },
   {
-    quote: "Meus pacientes com TDAH melhoraram a atenção sustentada em 40% após 8 sessões de RPG estruturado. A plataforma me deu os dados para provar isso.",
-    name: "Dra. Mariana Alves",
-    role: "Psicóloga Clínica · CRP 06/12345",
-    tag: "RPG Terapêutico",
-    color: "bg-accent",
-  },
-  {
     quote: "Transformei o espaço ocioso da loja em 15 mesas reserváveis por semana. O faturamento com eventos superou o de vendas de jogos.",
     name: "Carlos Mendes",
     role: "Proprietário · Loja Dado & Carta",
@@ -33,19 +26,19 @@ const Testimonials = () => (
           Quem já está na mesa
         </p>
         <h2 className="text-3xl md:text-5xl font-serif font-bold">
-          Três perfis, uma{" "}
+          Dois perfis, uma{" "}
           <span className="text-gradient-warm">revolução</span>
         </h2>
       </AnimatedSection>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {speakers.map((s, i) => (
           <AnimatedSection key={i} delay={i * 0.15}>
             <div className="glass glass-hover rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300">
               <div className={`h-2 w-full ${s.color}`} />
               <div className="p-8 flex flex-col flex-1">
                 <span className={`text-xs font-sans font-semibold tracking-[0.15em] uppercase mb-4 inline-block ${
-                  i === 0 ? "text-primary" : i === 1 ? "text-accent" : "text-crm-blue"
+                  i === 0 ? "text-primary" : "text-crm-blue"
                 }`}>
                   {s.tag}
                 </span>
