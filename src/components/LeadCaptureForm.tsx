@@ -25,8 +25,6 @@ type FormData = z.infer<typeof formSchema>;
 
 const perfilOptions = [
   { value: "mestre_rpg", label: "Mestre de RPG / Host de Board Games" },
-  { value: "psicologo", label: "Psicólogo(a) / Terapeuta" },
-  { value: "educador", label: "Educador(a) / Pedagogo(a)" },
   { value: "lojista", label: "Lojista / Espaço de Jogos" },
   { value: "jogador", label: "Jogador" },
 ];
