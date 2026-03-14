@@ -5,12 +5,12 @@ const cards = [
   {
     icon: CalendarOff,
     title: "Cancelamentos que Custam Caro",
-    desc: "Cada mesa vazia é receita perdida — e, no caso terapêutico, um paciente que interrompeu o processo. Sem compromisso financeiro, o 'depois eu remarco' vira rotina.",
+    desc: "Cada mesa vazia é receita perdida. Sem compromisso financeiro, o 'depois eu remarco' vira rotina.",
   },
   {
     icon: Brain,
     title: "Método Poderoso, Logística Cruel",
-    desc: "Você domina a arte de narrar, ensinar ou curar através do jogo. Mas gerenciar agendas, cobranças e fichas em planilhas soltas consome o tempo que deveria ser da mesa.",
+    desc: "Você domina a arte de narrar e entreter através do jogo. Mas gerenciar agendas, cobranças e fichas em planilhas soltas consome o tempo que deveria ser da mesa.",
   },
   {
     icon: DollarSign,
